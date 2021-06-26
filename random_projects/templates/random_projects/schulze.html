@@ -1,0 +1,77 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<script defer type="text/javascript" src="{% static 'random_projects/schulze.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'random_projects/schulze.css' %}"/>
+
+<h1>
+    Schulze
+</h1>
+
+<p>
+    This program helps you calculate the result of a vote. The method used to do this, is called Schulze.
+    More information about this method can be found on  
+    <a href="https://en.wikipedia.org/wiki/Schulze_method" target="_blank">this Wikipedia page</a>.  
+</p>
+
+<div id="start-screen">
+    <h4 class="underline">
+        Add options
+    </h4>
+    
+    <div class="list-container-options">
+        <div id="current-options" class="input-group">
+
+        </div>
+        <form id="option-form" onsubmit="return addOption()" autocomplete="off" novalidate>
+            <div class="input-group mb-1 mt-3 standard-width-hight">
+                <input type="text" class="form-control" placeholder="Add new option" id="new-option">
+                <button class="btn btn-primary mb-1" type="submit">Add</button>
+                <div class="invalid-feedback">
+                    <span id="add-option-invalid-feedback"></span>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+
+    <button class="btn btn-primary" onclick="toVote()" id="start">Start vote</button>
+</div>
+
+
+<div id="votes-screen" style="display: none">
+    <div id="votes-scroll" class="input-group scroll-class">
+        <div id="current-votes" class="list-container-votes">
+
+        </div>
+    </div>
+    <form id="vote-form" onsubmit="return addVote()" autocomplete="off" novalidate>
+        <div class="input-group mb-1 standard-width-hight" style="width: 50%;">
+            <input type="text" class="form-control" placeholder="B-AC-D" id="new-vote">
+            <button class="btn btn-primary mb-1" type="submit" id="add-vote">Add vote</button>
+            <div class="invalid-feedback">
+                Invalid input. See explanation below on how to add valid votes.
+            </div>
+        </div>
+    </form>
+
+    <h4>Result based on current votes</h4>
+    <div id="current-results" class="input-group list-container-results">
+
+    </div>
+
+
+<button class="btn btn-primary mb-3" onclick="toStartScreen()" id="start">New vote</button>
+
+<p class="text" style="font-size: 11px;">
+    A vote can be entered as follows: a '-', '_' or '' can be used to
+        differentiate options (indicated by their letter) (eg A-B). To point out
+        that there is no preference between two options, just write them one after the other (eg AB). Options that 
+        appear last don't need to be entered. The program adds these options automatically (AC -> AC-BD). 
+        You can press enter to add a new vote.
+</p>
+</div>
+
+{% endblock content %}

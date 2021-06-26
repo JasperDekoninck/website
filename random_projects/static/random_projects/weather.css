@@ -1,0 +1,122 @@
+#current-weather table {
+    table-layout: fixed;
+    min-width: 300px;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+
+#current-weather-all {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    width: 100%
+}
+
+
+/* Small screen: first text and then image of me */
+@media only screen and (max-width: 800px) {
+    #current-weather-all {
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+ }
+
+#current-weather th {
+    text-align: right;
+}
+
+#current-weather .th1 {
+    padding-right: 20px;
+}
+
+#minute-weather {
+    width: 100%;
+}
+
+#hourly-weather {
+    width: 100%;
+    margin-top: 30px;
+}
+
+#hourly-plot {
+    width: 100%;
+}
+
+#daily-weather {
+    width: 100%;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+}
+
+#city {
+    font-size: 2rem;
+    text-align: left;
+}
+
+.title {
+    font-size: 2rem;
+    text-align: left;
+    padding-left: 30px;
+}
+
+.temp {
+    font-size: 1.2rem;
+    text-align: right;
+}
+
+.time {
+    font-size: 1rem;
+    text-align: left;
+}
+
+.description {
+    font-size: 1rem;
+    text-align: right;
+}
+
+.time-hourly, .time-daily {
+    font-weight: 200;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+.icon-hourly, .icon-daily {
+    font-size: 2rem;
+    text-align: center;
+}
+
+.description-hourly, .description-daily {
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+#hourly-weather th, 
+#daily-weather th {
+    text-align: right;
+}
+
+#hourly-info {
+    position: absolute;
+    background-color: white;
+    padding: 10px;
+    border-radius: 20px;
+    border: 2px solid var(--secondary-color);
+    visibility: hidden;
+    box-shadow: 0 8px 12px 0 rgba(0,0,0,0.3);
+}
+
+#hourly-weather .btn-group {
+    margin-bottom: 20px;
+}
+
+.day {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 20px;
+    border: 2px solid var(--secondary-color);
+    box-shadow: 0 8px 12px 0 rgba(0,0,0,0.3);
+}

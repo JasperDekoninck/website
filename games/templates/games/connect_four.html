@@ -1,0 +1,18 @@
+{% extends 'games/general_game.html' %}
+{% load static %}
+
+{% block game %}
+<link rel="stylesheet" type="text/css" href="{% static 'games/connect_four.css' %}"/>
+<script defer type="text/javascript" src="{% static 'games/connect_four.js' %}"></script>
+
+<div id="game" class="game" style="display: table; margin: 0 auto;">
+    <div id="game-information">
+        <div id="end-message" style="visibility: hidden;">
+            Some Text
+        </div>
+    </div>
+    <canvas id="game-canvas" width=580 height=500>
+
+    </canvas>
+</div>
+{% endblock game %}

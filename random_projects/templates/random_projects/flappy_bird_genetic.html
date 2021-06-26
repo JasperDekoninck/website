@@ -1,0 +1,166 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+<script defer type="text/javascript" src="{% static 'games/flappy_bird.js' %}"></script>
+<script defer type="text/javascript" src="{% static 'random_projects/flappy_bird_genetic.js' %}"></script>
+
+<link rel="stylesheet" type="text/css" href="{% static 'random_projects/flappy_bird_genetic.css' %}"/>
+
+
+<h2>
+    Flappy bird: Genetic algorithm
+</h2>
+
+<p>
+    For more information about the algorithm used, check below.
+</p>
+
+<form id="flappy-form" onsubmit="return main()"  style="margin-bottom: 20px;">
+    <div class="form-group col-sm-6">
+        <label class="col-form-label"># Individuals: </label>
+        <div>
+            <input type="number" min="1" max="1500" id="generation" value="300" class="form-control"></input>
+        </div>
+    </div>
+
+    <div class="form-group col-sm-6">
+        <label class="col-form-label"># Best selected to reproduce: </label>
+        <div>
+            <input type="number" min="1" max="1500" id="best" value="50" class="form-control"></input>
+        </div>
+    </div>
+
+    <div class="form-group col-sm-6">
+        <label class="col-form-label"># Offspring: </label>
+        <div>
+            <input type="number" min="1" max="300" id="offspring" value="5" class="form-control"></input>
+        </div>
+    </div>
+
+    <div class="form-group col-sm-12">
+        <label class="col-form-label"> Mutation rate: </label>
+        <div class="d-flex">
+            <span class="font-weight-bold mr-2 mt-1">Small</span>
+            <div class="range-field w-25">
+                <input type="range" max="1" min="0.01" id="mutation" value="0.3" class="custom-range"  step="0.01">            
+            </div>
+            <span class="font-weight-bold ml-2 mt-1">Big</span>
+        </div>
+    </div>
+
+    <div class="button-group">
+        <button class="btn btn-primary" type="submit">Start</button>
+    </div>
+    
+</form>
+
+
+
+<div id="game" class="game">
+    <div class="game-information">
+        <h3>Top scores:</h3>
+        <ol id="top-scores">
+            <li></li>
+            <li></li>
+            <li></li>
+        </ol>
+        <p>Current generation: <span id="current-generation">1</span> </p>
+        <div class="form-group col-sm-12" style="margin-bottom: 20px;">
+            <label class="col-form-label"> Speed: </label>
+            <div class="d-flex">
+                <span class="font-weight-bold mr-2 mt-1">Slow</span>
+                <div class="range-field">
+                    <input type="range" max="5" min="1" id="speed" value="3" class="custom-range"  step="0.1" 
+                    onchange="changeSpeed()">            
+                </div>
+                <span class="font-weight-bold ml-2 mt-1">Fast</span>
+            </div>
+        </div>
+    </div>
+    
+    <div>
+        <div id="game-information">
+            <div id="score-information">
+            </div>
+        </div>
+        <canvas id="game-canvas" width=288 height=404 style="border: 1px solid black">
+
+        </canvas>
+    </div>
+    
+</div>
+
+
+<h4 style="margin-top: 50px;">
+    About the algorithm
+</h4>
+
+<p>
+    Some information about the algorithm used here, might be good. First of all, let's take a look at what 
+    "genetic algorithm" exactly means. A genetic algorithm uses a process very similar to natural selection to train 
+    an AI for a given task. In the first generation, some random individuals are generated. Each of these individuals 
+    performs the task that needs to be done (in this case: play the game) and are given a score. The better the 
+    individual performed, the better its score and the higher the probability that the individual "reproduce". This 
+    reproduction produces a slight variation of the given individual that is placed in the next generation. 
+</p>
+
+<p>
+    Now what are these individuals? You can imagine them as functions. Each individual is a function that maps an input 
+    (here: the speed of the bird and the relative positions of the visible pipes) to an output 
+    (jump or not jump?). This function has some parameters that can be changed to get another individual. It are these
+    parameters that are adapted in the "reproduction process". In this specific genetic algorithm, 
+    the function used is a small (dense) neural network. There are all kinds of pretty visualizations of 
+    neural networks (Google 
+    <a href="https://www.google.com/search?q=artificial+neural+network&source=lnms&tbm=isch&sa=X&ved=2ahUKEwiGmJHq3fXrAhURjqQKHUU6Ba0Q_AUoAXoECBAQAw&biw=1536&bih=754">
+    "artificial neural network"</a>), but to a mathematician it is just a sequence of 
+    matrix multiplication and additions with some non-linear function in between. The parameters of a neural network
+    are the matrices by which you multiply an add the given input.
+</p>
+
+<p>
+    How do we actually generate the next generation? In this case, we first select some of the best individuals of
+    the previous generation. We put them in the next generation (they survive) and allow each of them to reproduce 
+    a number of new individuals. Then, as long as we don't have enough individuals for the next generation, we 
+    select a random individual and allow it to reproduce as well. In the Flappy Bird game, there is a color code 
+    for individuals that have survived for quite long and individuals that are new:
+    <ul>
+        <li>Red: New individuals</li>
+        <li>Yellow: Individuals that have live between 2 and 3 (inclusive) generations</li>
+        <li>Blue: Individuals that have lived more than 3 generations</li>
+    </ul>
+</p>
+
+
+<h4>Parameters explained</h4>
+
+<ul>
+    <li><b># Individuals</b>: the number of individuals in one generation </li>
+    <li><b># Best selected to reproduce</b>: this number indicates how many of the top individuals are selected 
+    to reproduce</li>
+    <li><b># Offspring</b>: how many offspring each selected individual produces. Note that ("# offspring" + 1) multiplied
+    by "# Best selected to reproduce" must be smaller or equal to "# individuals".</li>
+    <li><b>Mutation rate</b>: how different a child can be from its parent. </li>
+    <li><b>Speed</b>: how fast the simulation goes</li>
+</ul>
+
+
+<div style="display: none;" id="images-flappy">
+    <img src="/media/games/flappy_bird/blue1b.png" id="blue1"></img>
+    <img src="/media/games/flappy_bird/blue2b.png" id="blue2"></img>
+    <img src="/media/games/flappy_bird/blue3b.png" id="blue3"></img>
+    <img src="/media/games/flappy_bird/blue4b.png" id="blue4"></img>
+    <img src="/media/games/flappy_bird/red1b.png" id="red1"></img>
+    <img src="/media/games/flappy_bird/red2b.png" id="red2"></img>
+    <img src="/media/games/flappy_bird/red3b.png" id="red3"></img>
+    <img src="/media/games/flappy_bird/red4b.png" id="red4"></img>
+    <img src="/media/games/flappy_bird/yellow1b.png" id="yellow1"></img>
+    <img src="/media/games/flappy_bird/yellow2b.png" id="yellow2"></img>
+    <img src="/media/games/flappy_bird/yellow3b.png" id="yellow3"></img>
+    <img src="/media/games/flappy_bird/yellow4b.png" id="yellow4"></img>
+
+    <img src="/media/games/flappy_bird/pipe.png" id="pipe"></img>
+</div>
+
+
+{% endblock content %}

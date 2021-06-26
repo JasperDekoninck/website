@@ -1,0 +1,80 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+<script defer type="text/javascript" src="{% static 'random_projects/mandelbrot.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'random_projects/mandelbrot.css' %}"/>
+
+<h1>
+    Mandelbrot set
+</h1>
+<p>
+    Here you can generate the mandelbrot set. Set the color map, the maximal number of iterations 
+    (this is done automatically, so you only need to adjust this if necessary). Zoom in by dragging over a specific
+    region of the canvas. 
+    More information about the mandelbrot set and the way it is generated can be found on 
+    <a href="https://en.wikipedia.org/wiki/Plotting_algorithms_for_the_Mandelbrot_set">this Wikipedia page</a>.
+</p>
+
+<p>
+    One last remark: you cannot zoom in indefinitely. This is just because I just use normal Javascript floats that 
+    don't have infinite accuracy. As soon as you zoom in too far, this becomes noticeable as the resulting image
+    becomes very pixelated.
+</p>
+
+<form style="margin: 20px;" id="mandel-form">
+    <div class="form-group col-sm-6">
+        <label class="col-form-label"> Color map: </label>
+        <div>
+            <select class="form-control" id="dropdown-choice">
+                <option value="wiki">Yellow-Blue</option>
+                <option value="hot">Hot</option>
+                <option value="ocean">Ocean</option>
+                <option value="jet">Jet</option>
+                <option value="blue-red">Blue-Red</option>
+                <option value="soft">Soft</option>
+                <option value="blue-purple">Blue-Purple</option>
+            </select>
+        </div>
+        
+    </div>
+
+    <div class="form-group col-sm-6">
+        <label class="col-form-label">Number of iterations: </label>
+        <div>
+            <input type="number" min="1" id="iterations" value="75" class="form-control" 
+            onchange="changeIterations()"></input>
+        </div>
+    </div>
+    <div class="form-group col-sm-6">
+        <label class="col-form-label">Width: </label>
+        <div>
+            <input type="number" min="1" max="5000" id="width" value="800" class="form-control" 
+                onchange="resizeCanvas()"></input>
+        </div>
+        
+    </div>
+    <div class="form-group col-sm-6">
+        <label class="col-form-label">Height: </label>
+        <div>
+            <input type="number" min="1" max="5000" id="height" value="600" class="form-control"
+            onchange="resizeCanvas()"></input>
+        </div>
+        
+    </div>
+    
+    <div class="button-group">
+        <button class="btn btn-primary" type="submit">Generate!</button>
+        <a class="btn btn-primary" onclick="return reset()">Reset</a>
+
+        <a id="downloadLnk" download="Mandelbrot.jpg" class="btn btn-primary">Download result</a>
+    </div>
+    
+</form>
+
+
+    
+<canvas id="generation-canvas" width=1200 height=900>
+</canvas>
+
+{% endblock content %}

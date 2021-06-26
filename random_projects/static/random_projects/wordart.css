@@ -1,0 +1,13 @@
+.letter {
+    position: absolute;
+    top: 45px;
+    left: 805px;
+    font-size: 10rem;
+}
+
+
+#create-letters {
+    position: absolute;
+    top: 80px;
+    left: 800px;
+}

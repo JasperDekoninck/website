@@ -1,0 +1,15 @@
+.time-information {
+    float: left;
+    font-size: 2rem;
+}
+
+#boost-information {
+    font-size: 2rem;
+    float: right;
+}
+
+#add-enemy-information {
+    font-size: 2rem;
+    float: right;
+    margin-right: 50px;
+}

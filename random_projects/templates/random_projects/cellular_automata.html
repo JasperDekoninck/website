@@ -1,0 +1,52 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'random_projects/cellular.css' %}"/>
+<script defer type="text/javascript" src="{% static 'random_projects/cellular.js' %}"></script>
+
+<h1>
+    Conway's game of life
+</h1>
+
+<p>
+Information on Conway's Game of Life can be found on <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">this Wikipedia page</a>.
+</p>
+<p>
+    Below you can try out the Game of Life for yourself. 
+    You can choose the speed at which it goes and the size
+    of the squares within the grid. You can move the grid by using your arrow keys.  You can set the state of a cell to active by clicking on them. Deactivating a cell 
+    is done by right clicking on them. Have fun :)
+</p>
+
+<div class="d-flex my-4">
+    <span class="font-weight-bold mr-2 mt-1">Slow</span>
+    <form class="range-field w-25">
+        <input type="range" class="custom-range" id="timeout" min="1" max="60" onchange="changeSpeed()">           
+    </form>
+    <span class="font-weight-bold ml-2 mt-1">Fast</span>
+
+</div>
+
+<div class="d-flex my-4">
+    <span class="font-weight-bold mr-2 mt-1">Small</span>
+    <form class="range-field w-25">
+        <input type="range" max="30" min="3" id="size" value="10" class="custom-range"  step="0.1"
+        onchange="changeSquare()">            
+    </form>
+    <span class="font-weight-bold ml-2 mt-1">Big</span>
+</div>
+
+<div class="button-group" style="margin-bottom: 20px;">
+    <button class="btn btn-primary" type="button" onclick="start_stop()" id="start_stop"> Start </button>
+    <button class="btn btn-primary" type="button" onclick="resetGrid()"> Reset Grid </button>
+</div>
+
+    
+<div style="display: table; margin: 0 auto;">
+    <canvas id="generation-canvas" oncontextmenu="return false;">
+    </canvas>
+    
+</div>
+
+{% endblock content %}

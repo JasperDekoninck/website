@@ -1,0 +1,107 @@
+{% extends 'main/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'users/style.css' %}"/>
+
+<h2> {{ username }} </h2>
+
+<div class="profile-container">
+
+  <div id="profile-info" class="profile-left-section">
+
+    <div class="profile-info-section">
+    <div class="title">
+      Profile Info
+      </div>
+    <form method="POST" enctype="multipart/form-data" class="profile-form" novalidate>
+      {% csrf_token %}
+      <fieldset class="form-group">
+          {{ u_form|crispy }}
+      </fieldset>
+      <button class="btn btn-primary" type="submit">
+          Update
+      </button>
+    </form>
+    </div>
+    
+  </div>
+  <div class="profile-right-section">
+    <div class="profile-info-section">
+      <div class="title">
+        Friends
+      </div>
+
+      {% if user.friends.all|length == 0 %}
+        <p>You don't have any friends yet.</p>
+      {% endif %}
+
+    {% for friend in user.friends.all %}
+        <form id="unfriend-{{friend.username}}" method="POST" action="{% url 'unfriend' %}" style="display: none">
+          {% csrf_token %}
+          <input name="{{ unfriend_form.username.name }}" value={{friend.username}}>
+        </form>
+      <div class="friend">
+        <p class="friend-text">{{ friend.username }}</p>
+        <button class="btn-sm btn-primary friend-button" type="submit" form="unfriend-{{friend.username}}" style="float: right">Unfriend</button> 
+      </div> 
+      
+
+        
+      {% endfor %}
+
+    </div>
+
+    <div class="profile-info-section">
+      <div class="title">
+        Friend Requests
+      </div>
+
+      {% if friend_requests|length == 0 %}
+        <p>You have no friend requests.</p>
+      {% endif %}
+
+      {% for friend_request in friend_requests %}
+
+          <form id="accept-{{friend_request.pk}}" method="POST" action="{% url 'friend-accept' %}" style="display: none">
+            {% csrf_token %}
+            <input name="{{ accept_reject_form.pk_value.name }}" value={{friend_request.pk}}>
+          </form>
+        
+        <form id="reject-{{friend_request.pk}}" method="POST" action="{% url 'friend-reject' %}" style="display: none">
+          {% csrf_token %}
+          <input name="{{ accept_reject_form.pk_value.name }}" value={{friend_request.pk}}>
+        </form>
+
+        <div class="friend">
+          <p class="friend-text">{{ friend_request.from_user.username }}</p>
+          <div class="button-group" style="float: right">
+            <button class="btn-sm btn-primary friend-button" type="submit" form="accept-{{friend_request.pk}}">Accept</button> 
+            <button class="btn-sm btn-secondary friend-button"  type="submit" form="reject-{{friend_request.pk}}">Reject</button>
+          </div>
+        </div>
+          
+
+      {% endfor %}
+
+    <div class="title">
+      Send Friend Request
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="profile-form" action="{% url 'friend-request' %}">
+      {% csrf_token %}
+      <fieldset class="form-group">
+          {{ friend_request_form|crispy }}
+      </fieldset>
+      <button class="btn btn-primary" type="submit">
+          Send Request
+      </button>
+    </form>
+    </div>
+
+  </div>
+</div>
+  
+    
+{% endblock content %}

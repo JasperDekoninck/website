@@ -1,0 +1,124 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<script defer type="text/javascript" src="{% static 'random_projects/weather.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'random_projects/weather.css' %}"/>
+<link rel="stylesheet" type="text/css" href="{% static 'random_projects/weather-icons-wind.css' %}"/>
+<link rel="stylesheet" type="text/css" href="{% static 'random_projects/weather-icons.css' %}"/>
+<script src="https://cdn.plot.ly/plotly-2.0.0.min.js"></script>
+
+<h1>
+    Weather forecast
+</h1>
+
+<form style="margin: 20px;" method="POST" class="form-group">
+    {% csrf_token %}
+    {{ weather_form|crispy }}
+    <button class="btn btn-primary" type="submit">Search</button>
+</form>
+{% if request.POST %}
+    <div id="current-weather-all">
+        <table>
+            <tr>
+                <td id="city"></td>
+                <td id="temperature-now" class="temp"> </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div id="current-weather">
+                        <table>
+                            <tr>
+                                <td id="time-now" class="time" colspan="2"></td>
+                                <th id="description-now" class="description" colspan="2"> </th>
+                            </tr>
+                            <tr>
+                                <td id="wind-now-word">Wind</td>
+                                <th id="wind-now" class="th1"></th>
+                                <td id="rain-now-word">Precipitation</td>
+                                <th id="rain-now"></th>
+                            </tr>
+                            <tr>
+                                <td id="UV-now-word">UV Index</td>
+                                <th id="UV-now" class="th1"></th>
+                                <td id="humidity-now-word">Humidity</td>
+                                <th id="humidity-now"></th>
+                            </tr>
+                            <tr>
+                                <td id="pressure-now-word">Pressure</td>
+                                <th id="pressure-now" class="th1"></th>
+                                <td id="dew-now-word">Dew point</td>
+                                <th id="dew-now"></th>
+                            </tr>
+                            <tr>
+                                <td id="clouds-now-word">Cloudiness</td>
+                                <th id="clouds-now" class="th1"></th>
+                                <td id="real-feel-now-word">Real feel</td>
+                                <th id="real-feel-now"></th>
+                            </tr>
+                            <tr>
+                                <td id="sunrise-now-word">Sunrise</td>
+                                <th id="sunrise-now" class="th1"></th>
+                                <td id="sunset-now-word">Sunset</td>
+                                <th id="sunset-now"></th>
+                                
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <div id="minute-weather-all">
+            <p class="title">Precipitation next hour</p>
+            <div id="minute-weather">
+        
+            </div>
+        </div>
+        
+    </div>
+    
+    
+    <div id="hourly-weather">
+        <p class="title">Hourly report</p>
+        <div class="btn-group" role="group">
+            <button type="submit" class="btn btn-outline-primary active" id="temp-button">Temperature</button>
+            <button type="submit" class="btn btn-outline-primary" id="rain-button">Rain probability</button>
+        </div>
+
+        <div id="hourly-plot-temp">
+
+        </div>
+        <div id="hourly-plot-rain" style="display: none">
+
+        </div>
+        <div id="hourly-info">
+
+        </div>
+    </div>
+
+    <p class="title">Daily report</p>
+    <div id="daily-weather">
+
+    </div>
+
+
+    <p style="display: none" id="weather">
+        {{ weather }}
+    </p>
+    <p style="display: none" id="city-input">
+        {{ city }}
+    </p>
+
+{% endif %}
+
+<p>
+    <p class="title">Sources</p>
+    For this project, I used the <a href="https://openweathermap.org/">Open Weather Map API</a> to get the 
+    weather at cities. The icons for displaying what kind of weather it is, come from 
+    <a href="https://erikflowers.github.io/weather-icons/">Erik Flowers</a>.
+</p>
+
+
+{% endblock content %}

@@ -1,0 +1,32 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'random_projects/style.css' %}"/>
+<script defer src="{% static 'main/project.js' %}" type="text/javascript"></script>
+<h1>Random Projects</h1>
+
+
+<div class="project-list">
+
+    {% for project in projects %}
+
+        <a class="project" href="{{ project.get_absolute_url }}">
+            <div class="project-inner">
+                <div class="project-front">
+                    <h1>{{ project.title }}</h1> 
+                    {% if project.image.url is not None %}
+                        <img src="{{ project.image.url }}">
+                    {% endif %}
+                </div>
+                <div class="project-back">
+                <h1>{{ project.title }}</h1> 
+                <p>{{ project.description }}</p> 
+                </div>
+            </div>
+        </a>
+
+    {% endfor %}
+
+</div>
+{% endblock content %}

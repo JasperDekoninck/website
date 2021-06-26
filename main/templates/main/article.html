@@ -1,0 +1,24 @@
+{% load static %}
+
+<div class="news-article">
+    <div class="green-balk"></div>
+    <div class="image-container">
+    {% if forloop.counter|divisibleby:2 %}
+        <img src="{{ article.image.url }}" class="left-img">
+    {% else %}
+        <img src="{{ article.image.url }}" class="right-img">
+    {% endif %}
+    </div>
+    <div class="information">
+        <h3 class="title"> {{ article.title }} </h3>
+        <p class="date"> {{ article.created_at }} </p>
+        <span class="description"> {{article.description }} </span>
+            {% if article.content_type %}
+                <div>
+                    <a class="btn btn-primary" href={{ article.project.get_absolute_url }}>
+                        {{ article.button_text }}
+                    </a>
+                </div>
+            {% endif %}
+    </div>
+</div>

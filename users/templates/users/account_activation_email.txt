@@ -1,0 +1,14 @@
+Hi {{ user.username }},
+
+To activate your account on {{ domain }}, click the link below:
+
+{{ protocol }}://{{ domain }}{% url 'activate-account-confirm' uidb64=uid token=token %}"
+
+If clicking the link above doesn't work, please copy and paste the URL in a new browser
+window instead.
+
+Hope you have fun playing the games on my website!
+
+Kind Regards,
+
+Jasper Dekoninck

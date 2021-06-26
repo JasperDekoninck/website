@@ -1,0 +1,9 @@
+#score-information {
+    float: left;
+    font-size: 1.6rem;
+}
+
+#gameover {
+    font-size: 1.6rem;
+    float: right;
+}

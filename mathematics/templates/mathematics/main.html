@@ -1,0 +1,21 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+<h1>Mathematics</h1>
+All these projects are mathematical problems I worked on in the past, because I found them fun. Note that even 
+though all of this is my original work, I don't know whether or not the given ideas have not yet been published in 
+another paper. The mathematics in these papers is never truly difficult in the sense that it doesn't contain advanced
+mathematical concepts. Even more, most ideas and proofs in these papers were finished before I went to university!
+
+<ul style="margin-top: 30px;">
+    {% for project in projects %}
+    <li>
+        <a href="{{ project.file.url }}" download>{{project.title}}</a>
+        <p>
+            {{project.description}}
+        </p>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock content %}

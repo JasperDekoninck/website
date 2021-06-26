@@ -1,0 +1,51 @@
+canvas {
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+.custom-range {
+    padding-top: 12px;
+}
+
+.custom-range::-webkit-slider-thumb {
+    background: var(--secondary-color);
+  }
+  
+  .custom-range::-moz-range-thumb {
+    background: var(--secondary-color);
+    
+  }
+  
+  .custom-range::-ms-thumb {
+    background: var(--secondary-color);
+  }
+
+  .custom-range::-webkit-slider-thumb:active {
+      background: var(--secondary-color-select);
+      box-shadow: 0 0 4px var(--secondary-color);
+
+  }
+
+  .custom-range::-webkit-slider-thumb:focus {
+    background: var(--secondary-color-select);
+    box-shadow: 0 0 4px var(--secondary-color);
+
+}
+
+.custom-range:focus::-webkit-slider-thumb{
+    background: var(--secondary-color-select);
+    box-shadow: 0 0 4px var(--secondary-color);
+}
+
+.custom-range:focus::-moz-range-thumb {
+    background: var(--secondary-color-select);
+    box-shadow: 0 0 4px var(--secondary-color);
+}
+
+.custom-range:focus::-ms-thumb {
+    background: var(--secondary-color-select);
+    box-shadow: 0 0 4px var(--secondary-color);
+}

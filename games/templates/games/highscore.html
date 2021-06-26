@@ -1,0 +1,250 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'games/style.css' %}"/>
+<script defer src="{% static 'games/highscores.js' %}"></script>
+
+<p id="variant-post" style="display: none">{{ score_variant.pk }}</p>
+<p id="game-post" style="display: none">{{ score_variant.game.pk }}</p>
+
+<h1 id="title-highscores">Highscores</h1>
+<div id="div-sidebar" class="div-sidebar">
+    <div class="sidebar-highscores">
+        <form>
+            <div class="form-group row" onchange="calculate(true)">
+            <label class="col-sm-3 col-form-label"> Game: </label>
+            <select class="form-control select-option" id="sel1">
+                {% for game in games %}
+                    <option value="{{game.pk}}"> {{ game.title }} </option>
+                {% endfor %}
+            </select>
+            </div>
+
+            <div class="form-group row" onchange="calculate(false)">
+            <label class="col-sm-3 col-form-label"> Variant: </label>
+            <select class="form-control select-option" id="sel2">
+                {% for variant, game in game_variants.items %}
+                    <option value="{{variant.pk}}" id="{{game.pk}}-{{variant.pk}}"> {{ variant.title }} </option>
+                {% endfor %}
+            </select>
+            </div>
+
+            {% if user.is_authenticated %}
+                <div class="form-group row" onchange="calculate(false)">
+                <label class="col-sm-3 col-form-label"> Ranking: </label>
+                <select class="form-control select-option" id="sel3">
+                    <option value="friends">Friends</option>
+                    <option value="global">Global</option>
+                </select>
+                </div>
+
+                <div class="form-group row" onchange="calculate(false)">
+                    <label class="col-sm-3 col-form-label"> View: </label>
+                    <select class="form-control select-option" id="sel5">
+                        <option value="all">Show all scores</option>
+                        <option value="own">Only own scores</option>
+                    </select>
+                </div>
+            {% endif %}
+
+            <div class="form-group row" onchange="calculate(false)">
+            <label class="col-sm-3 col-form-label"> Show: </label>
+            <select class="form-control select-option" id="sel4">
+                <option value=10> 10 scores per player </option>
+                <option value=1> Top score per player </option>
+            </select>
+            </div>
+        </form> 
+    </div>
+</div>
+
+<div style="text-align: center;" id="mainbar-highscores">
+    <div id="global">
+        {% for variant, top_score in top_scores.items %}
+            <div id="global-{{variant.pk}}" class="highscore-div">
+                <h2>{{variant}}</h2>
+                <ol class="highscore-list">
+                    {% for score in top_score %}
+                        {% if user == score.user %}
+                            <b>
+                        {% endif %}
+                        <li class="higscore-element">
+                            {{ score.user.username }}: {{ score.score }}
+                        </li>
+                        {% if user == score.user %}
+                            </b>
+                        {% endif %}
+                    {% endfor %}
+                </ol>
+
+                {% if place != -1 and score_variant == variant %}
+                    <h4>Your score: {{ user_score }}</h4>
+                    <h4>Your Place: {{ place }} </h4>
+                {% endif %}
+                
+                <br>
+                <a class="btn btn-primary" href="{{ variant.get_absolute_url }}">Play</a>
+            </div>
+        {% endfor %}
+    </div>
+
+
+    <div id="global-own">
+        {% for variant, top_score in top_scores_user.items %}
+            <div id="global-own-{{variant.pk}}" class="highscore-div">
+                <h2>{{variant}}</h2>
+                <ol class="highscore-list">
+                    {% for score in top_score %}
+                        <li class="higscore-element" value="{{score.0}}">
+                            {{ score.1.score }}
+                        </li>
+                    {% endfor %}
+                </ol>
+                <br>
+                <a class="btn btn-primary" href="{{ variant.get_absolute_url }}">Play</a>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div id="unique-global">
+        {% for variant, top_score in top_scores_unique.items %}
+            <div id="unique-global-{{variant.pk}}" class="highscore-div">
+                <h2>{{variant}}</h2>
+                <ol  class="highscore-list">
+                    {% for score in top_score %}
+                        {% if user == score.user %}
+                            <b>
+                        {% endif %}
+                        <li class="higscore-element">
+                            {{ score.user.username }}: {{ score.score }}
+                        </li>
+                        {% if user == score.user %}
+                            </b>
+                        {% endif %}
+                    {% endfor %}
+                </ol>
+
+                {% if place_unique != -1 and score_variant == variant %}
+                    <h4>Your score: {{ user_score }}</h4>
+                    <h4>Your Place: {{ place_unique }} </h4>
+                {% endif %}
+            <br>
+            <a class="btn btn-primary" href="{{ variant.get_absolute_url }}">Play</a>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div id="unique-global-own">
+        {% for variant, top_score in top_scores_unique_user.items %}
+            <div id="unique-global-own-{{variant.pk}}" class="highscore-div">
+                <h2>{{variant}}</h2>
+                <ol class="highscore-list">
+                    {% for score in top_score %}
+                        <li class="higscore-element" value="{{score.0}}">
+                            {{ score.1.score }}
+                        </li>
+                    {% endfor %}
+                </ol>
+                <br>
+                <a class="btn btn-primary" href="{{ variant.get_absolute_url }}">Play</a>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div id="friends">
+        {% for variant, top_score in top_scores_friends.items %}
+            <div id="friends-{{variant.pk}}" class="highscore-div">
+                <h2>{{variant}}</h2>
+                <ol  class="highscore-list">
+                    {% for score in top_score %}
+                        {% if user == score.user %}
+                            <b>
+                        {% endif %}
+                        <li class="higscore-element">
+                            {{ score.user.username }}: {{ score.score }}
+                        </li>
+                        {% if user == score.user %}
+                            </b>
+                        {% endif %}
+                    {% endfor %}
+                </ol>
+
+                {% if place_friends != -1 and score_variant == variant %}
+                    <h4>Your score: {{ user_score }}</h4>
+                    <h4>Your Place: {{ place_friends }} </h4>
+                {% endif %}
+            <br>
+            <a class="btn btn-primary" href="{{ variant.get_absolute_url }}">Play</a>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div id="friends-own">
+        {% for variant, top_score in top_scores_friends_user.items %}
+            <div id="friends-own-{{variant.pk}}" class="highscore-div">
+                <h2>{{variant}}</h2>
+                <ol class="highscore-list">
+                    {% for score in top_score %}
+                        <li class="higscore-element" value="{{score.0}}">
+                            {{ score.1.score }}
+                        </li>
+                    {% endfor %}
+                </ol>
+                <br>
+                <a class="btn btn-primary" href="{{ variant.get_absolute_url }}">Play</a>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div id="unique-friends">
+        {% for variant, top_score in top_scores_unique_friends.items %}
+            <div id="unique-friends-{{variant.pk}}" class="highscore-div">
+                <h2>{{variant}}</h2>
+                <ol  class="highscore-list">
+                    {% for score in top_score %}
+                        {% if user == score.user %}
+                            <b>
+                        {% endif %}
+                        <li class="higscore-element">
+                            {{ score.user.username }}: {{ score.score }}
+                        </li>
+                        {% if user == score.user %}
+                            </b>
+                        {% endif %}
+                    {% endfor %}
+                </ol>
+
+                {% if place_unique_friends != -1 and score_variant == variant %}
+                    <h4>Your score: {{ user_score }}</h4>
+                    <h4>Your Place: {{ place_unique_friends }} </h4>
+                {% endif %}
+            <br>
+            <a class="btn btn-primary" href="{{ variant.get_absolute_url }}">Play</a>
+
+            </div>
+            
+        {% endfor %}
+    </div>
+
+    <div id="unique-friends-own">
+        {% for variant, top_score in top_scores_unique_friends_user.items %}
+            <div id="unique-friends-own-{{variant.pk}}" class="highscore-div">
+                <h2>{{variant}}</h2>
+                <ol class="highscore-list">
+                    {% for score in top_score %}
+                        <li class="higscore-element" value="{{score.0}}">
+                            {{ score.1.score }}
+                        </li>
+                    {% endfor %}
+                </ol>
+                <br>
+                <a class="btn btn-primary" href="{{ variant.get_absolute_url }}">Play</a>
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+
+{% endblock content %}

@@ -1,0 +1,46 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+<script defer type="text/javascript" src="{% static 'games/general_game.js' %}"></script>
+
+<h1>{{ variant.game.title }}: {{ variant.title }} </h1>
+
+{% if variant.has_score %}
+    <form action="{% url 'highscore' %}" method="POST" id="highscores-form" style="display: none">
+        {% csrf_token %}
+        {{ highscore_form }}
+    </form>
+{% endif %}
+
+<div style="display: none;" id="id-score">{{ token }}</div>
+
+
+<div id="end-buttons" class="button-group" style="visibility: hidden; margin-bottom: 10px;">
+    <a class="btn btn-primary mb-2" href={{ variant.get_absolute_url }}>Play again</a>
+    {% if variant.has_score %}
+        <button type="submit" class="btn btn-primary mb-2" form="highscores-form" id="highscore-button">Go to highscores</button>
+        {% if not user.is_authenticated %}
+            <button type="submit" class="btn btn-primary mb-2" id="submit-score-not-logged" form="form-score-not">Log in to save score</button>
+        {% endif %}
+    {% endif %}
+</div>
+
+{% if user.is_authenticated %}
+    <form method="POST" id="form-score" action="{{ variant.get_absolute_url }}" style="display: none;">
+        {% csrf_token %}
+    </form>
+
+{% elif variant.has_score %}
+
+    <form method="POST" id="form-score-not" action="{{ variant.get_absolute_url }}save_not_login" style="display: none;">
+        {% csrf_token %}
+        {{ form }} 
+    </form>
+
+{% endif %}
+
+{% block game %}
+{% endblock game %}
+
+{% endblock content %}

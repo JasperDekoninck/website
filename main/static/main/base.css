@@ -1,0 +1,95 @@
+/* CSS file for advanced styling navbar:  changing background on scroll
+   CSS file for background image at the top.
+*/
+
+@keyframes not-scroll {
+    0% {box-shadow: 0px 5px 20px black; background-color: var(--main-color);}
+    100% {box-shadow: 0 0 0; background-color: transparent}
+}
+
+@keyframes scroll {
+    0% {box-shadow: 0 0 0; background-color: transparent}
+    100% {box-shadow: 0px 5px 20px black; background-color: var(--main-color);}
+}
+
+
+/* No animation for phones */
+@media only screen and (max-width: 740px) {
+    .not-scrolled {
+        background-color: var(--main-color);
+    } 
+    .not-scrolled:hover {
+        background-color: var(--main-color);
+    }
+    .un-scrolled {
+        background-color: var(--main-color);
+    }
+    .scroll {
+        background-color: var(--main-color);
+    }
+ }
+
+/*  Start for the bigger screens -> you don't want the animation from teh very start */
+ @media only screen and (min-width: 740px) {
+    .not-scrolled {
+        box-shadow: 0 0 0; 
+        background-color: transparent;
+    }
+    .not-scrolled:hover {
+        box-shadow: 0 0 0; 
+        background-color: transparent
+    }
+    .un-scrolled {
+        animation: not-scroll 1s forwards
+    }
+    .scrolled {
+        animation: scroll 1s forwards;
+    }
+ }
+
+ /* Top image animation */
+.top-image {
+    width: 100%;
+    background: black;
+}
+
+.navbar-image {
+    width: 30px;
+    height: 30px;
+    text-align: left;
+}
+@keyframes image-fade-in {
+    0%   {opacity: 0.1; }
+    100% {opacity: 0.4; }
+}
+
+@keyframes div-fade-in {
+    0% {opacity: 0;}
+    100% {opacity: 1;}
+}
+
+/* Title on image */
+.top-image div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 5rem;
+    animation: div-fade-in 5s forwards;
+    color: white;
+    transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+    text-align: center
+}
+
+/* Making sure image is always 100% of the screen */
+.top-image img {
+    width: 100%;
+    height: 100vh;
+    animation: image-fade-in 5s forwards;
+    object-fit: cover;
+}
+
+.main-container {
+    padding-top: 0px;
+    margin-top: 20px;
+}

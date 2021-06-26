@@ -1,0 +1,197 @@
+/* CSS file for main page */
+
+.main-section {
+    margin-bottom: 50px;
+}
+
+/* About me needs extra styling */
+.aboutme {
+    display: flex;
+    margin: 50px 0;
+    box-shadow: 0 4px 24px rgb(0, 0, 0, 0.2);
+}
+
+.aboutme-image {
+    display: inline-block;
+    width: 50%;
+    padding: 80px;
+    padding-left: 0px;
+
+}
+
+.aboutme-image img {
+    width: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.aboutme-text {
+    display: inline-block;
+    width: 50%;
+    padding: 80px;
+}
+
+.aboutme-text h2 {
+    text-align: center;
+}
+
+/* Small screen: first text and then image of me */
+@media only screen and (max-width: 1080px) {
+    .aboutme {
+        display: block;
+    }
+    .aboutme-text {
+        display: block;
+        width: 100%;
+        padding: 40px 20px;
+        padding-bottom: 0;
+    }
+    .aboutme-image {
+        display: block;
+        width: 100%;
+        max-width: 400px;
+        padding: 20px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+ }
+
+ /* Main top image animation -> different than the other top images*/
+ .main-image {
+    width: 100%;
+    background: black;
+}
+
+@keyframes image-fade-in {
+    0%   {opacity: 0.1; }
+    100% {opacity: 0.4; }
+}
+
+@keyframes div-fade-in {
+    0% {opacity: 0;}
+    100% {opacity: 1;}
+}
+
+.main-image .container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    text-align: left;
+    transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+    color: white;
+}
+
+.main-image p {
+    max-width: 600px;
+    font-size: 1rem;
+}
+
+.main-image img {
+    width: 100%;
+    height: 100vh;
+    animation: image-fade-in 5s forwards;
+    object-fit: cover;
+}
+
+/* Making buttons a bit further apart*/
+.button-group .btn {
+    margin-right: 10px;
+}
+
+
+/* Card with project classes */
+.container-cards {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.card {
+    width: 300px;
+    border-radius: 10px;
+    box-shadow: -.2rem 0 1rem var(--secondary-color);
+    transition: 0.4s ease-out;
+    left: 0px;
+    overflow: hidden;
+}
+
+/* Disabling the underline effect of the a-tag */
+.card:hover {
+    text-decoration: none;
+}
+
+.card:not(:first-child) {
+    margin-left: -50px;
+}
+
+.card:hover {
+    transform: translateY(-20px);
+    transition: 0.4s ease-out;
+}
+
+.card:hover ~ .card {
+    left: 50px;
+    transition: 0.4s ease-out;
+}
+
+.card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.card h4 {
+    color: black;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+/* bar hover effect */
+.card .bar {
+    height: 5px;
+    width: 150px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.card .filledbar {
+    width: 0px;
+    height: 100%;
+    background: var(--secondary-color);
+    transition: width 0.6s ease-out;
+    border-radius: 6px;
+}
+
+.card:hover .filledbar{
+    width: 150px;
+    transition: width 0.4s ease-out;
+}
+
+.card p {
+    color: black;
+    text-align: left;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+/* Making sure they appear below each other when screen is small*/
+@media only screen and (max-width: 740px) {
+    .card {
+        display: block;
+        margin: auto;
+        margin-top: 50px;
+        width: 80%;
+    }
+    .container-cards {
+        display: block;
+    }
+
+    .card:not(:first-child) {
+        margin-left: auto;
+    }
+    .card:hover ~ .card {
+        left: 0;
+    }
+ }

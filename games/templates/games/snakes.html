@@ -1,0 +1,31 @@
+{% extends 'games/general_game.html' %}
+{% load static %}
+
+{% block game %}
+<link rel="stylesheet" type="text/css" href="{% static 'games/snakes.css' %}"/>
+<script defer type="text/javascript" src="{% static 'games/snakes.js' %}"></script>
+<script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+
+
+<div style="display: none;" id="images-snakes">
+    <img src="/media/games/snakes/snake_head.png" id="snake-head"></img>
+    <img src="/media/games/snakes/snake_head_tongue.png" id="snake-head-tongue"></img>
+    <img src="/media/games/snakes/snake_head_dead.png" id="snake-head-dead"></img>
+    <img src="/media/games/snakes/snake_end.png" id="snake-end"></img>
+    <img src="/media/games/snakes/snake_body.png" id="snake-body"></img>
+    <img src="/media/games/snakes/snake_body_twisted.png" id="snake-body-twisted"></img>
+    <img src="/media/games/snakes/apple.png" id="apple"></img>
+</div>
+
+<div id="game" class="game" style="display: table; margin: 0 auto;">
+    <div id="game-information">
+        <div class="score-information" id= "score-info">
+        </div>
+    </div>
+    <canvas id="game-canvas" width=450, height=450 style="border:1px solid #000000;">
+
+    </canvas>
+</div>
+
+
+{% endblock game %}

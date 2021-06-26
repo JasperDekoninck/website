@@ -1,0 +1,64 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'random_projects/snowflake.css' %}"/>
+
+<script defer type="text/javascript" src="{% static 'random_projects/snowflake.js' %}"></script>
+
+<h1>
+    Snowflake generation
+</h1>
+
+<p>
+    The idea for this algorithm came from 
+    <a href="https://www.youtube.com/watch?v=XUA8UREROYE&ab_channel=TheCodingTrain">The Coding Train's Youtube Channel</a>.
+</p>
+
+<form id="snowflake-form" onsubmit="return generate()">
+    <div class="form-group col-sm-6">
+        <label class="col-form-label"> Angle: </label>
+        <div>
+            <select class="form-control" id="angle">
+                <option value="15">15</option>
+                <option value="30">30</option>
+                <option value="45">45</option>
+                <option value="60">60</option>
+                <option value="90">90</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group col-sm-12">
+        <label class="col-form-label"> Size particles: </label>
+        <div class="d-flex">
+            <span class="font-weight-bold mr-2 mt-1">Small</span>
+            <div class="range-field w-25">
+                <input type="range" max="10" min="1" id="size" value="2" class="custom-range"  step="0.1">            
+            </div>
+            <span class="font-weight-bold ml-2 mt-1">Big</span>
+        </div>
+    </div>
+
+    <div class="form-group  col-sm-12">
+        <label class="col-form-label"> Spread: </label>
+        <div class="d-flex">
+            <span class="font-weight-bold mr-2 mt-1">Low</span>
+            <div class="range-field w-25">
+                <input type="range" max="20" min="1" id="spread" value="3" class="custom-range"  step="0.1">            
+            </div>
+            <span class="font-weight-bold ml-2 mt-1">High</span>
+        </div>
+    </div>
+
+    <div class="button-group" style="margin-bottom: 20px;">
+        <button class="btn btn-primary" type="submit">Generate!</button>
+        <a id="downloadLnk" download="Snowflake.jpg" class="btn btn-primary">Download result</a>
+    </div>
+    
+</form>
+
+<canvas id="generation-canvas" width=1200 height=1200>
+</canvas>
+
+{% endblock content %}

@@ -1,0 +1,23 @@
+{% extends 'games/general_game.html' %}
+{% load static %}
+
+{% block game %}
+<link rel="stylesheet" type="text/css" href="{% static 'games/minesweeper.css' %}"/>
+<script defer type="text/javascript" src="{% static 'games/minesweeper.js' %}"></script>
+
+<div style="display: table; margin: 0 auto;">
+    <div id="game-information">
+        <div id="time-information">
+            Time: <span id="time">0</span>
+        </div>
+        <div id="bombs-information">
+            Bombs left: <span id="bombs">0</span>
+        </div>
+    </div>
+    
+    
+    <div id="game-board" class="board">    
+    </div>
+</div>
+
+{% endblock game %}

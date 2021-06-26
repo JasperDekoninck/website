@@ -1,0 +1,138 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block top_image %}
+    <link rel="stylesheet" type="text/css" href="{% static 'main/base.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'main/main.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'main/news.css' %}"/>
+
+    <script src="{% static 'main/navbar.js' %}" type="text/javascript"></script>
+    <script defer src="{% static 'main/main.js' %}" type="text/javascript"></script>
+    <script defer src="{% static 'main/news.js' %}" type="text/javascript"></script>
+
+    
+    <div class="main-image">
+        <img src="{{ image_background_source }}">
+        <div class="container">
+            <h2>Hello, world!</h2>
+            <p>
+                Welcome to my site! You can play games, discover some of my random projects or 
+                read some mathematical papers I wrote.
+            </p>
+
+            
+            <div class="button-group">
+                <button class="btn btn-primary mb-2" id="discover-button">
+                    Discover projects
+                </button>
+                <button class="btn btn-primary mb-2" id="news-button">
+                    Find out what's new!
+                </button>
+            </div>
+        </div>
+    </div>
+
+{% endblock top_image %}
+
+{% block content %}
+
+<div  class="main-section" id="about-site">
+    <h1>About this site</h1>
+    <p>
+        Welcome to my site I would say! If you've found your way to this site, you probably know what's in it, but in 
+        case you do not: this site is simply a platform where I showcase some cool/fun/random projects that I enjoy.
+        You can play several games and compare your highscores with the highscores of your friends. You can take a look
+        at some of my random projects or you can read some mathematical papers I wrote in the last couple of years. I hope 
+        you enjoy it! If you've any suggestions for projects, you can always <a href="{% url 'contact'%}">contact me</a>. 
+        The projects are currently seperated in the following categories:
+    </p>
+    
+    <div class="container-cards">
+        <a class="card" href="{% url 'games-home' %}">
+            <img src="/media/game.png">
+            <h4 class="title">Games</h4>
+            <div class="bar">
+                <div class="filledbar"></div>
+            </div>
+            <div>
+                <p>
+                    I like creating simple games. They are perfect to test your programming skills without having 
+                    to learn much graphic-related stuff (I suck at those things). Here you can find and play some of 
+                    the old time classics, so I hope you're going to enjoy them. 
+                </p>
+            </div>
+            
+            
+        </a>
+        <a class="card" href="{% url 'mathematics-home'%}">
+            <img src="/media/equations.png">
+            <h4 class="title">Mathematics</h4>
+            <div class="bar">
+            <div class="filledbar"></div>
+            </div>
+            <div>
+                <p>
+                    Mathematics is another topic I have an enormous interest for. I just put here same random mathematical 
+                    topics I like. Hope you enjoy &#128512
+                </p>
+            </div>
+        </a>
+        <a class="card" href="{% url 'random_projects-home'%}">
+            <img src="/media/random.jpg">
+            <h4 class="title">Random</h4>
+            <div class="bar">
+            <div class="filledbar"></div>
+            </div>
+            <div>
+                <p>
+                    Sometimes I just make some random things I like or something that seems fun to do. All of those projects 
+                    can be found here. I hope you might find inspiration for projects yourself &#128521
+                </p>
+            </div>
+        </a>
+    </div>
+</div>
+
+<div class="aboutme main-section">
+    <div class="aboutme-text">
+        <div>
+            <h2>About me</h2>
+            <p>
+                My name is Jasper Dekoninck and I'm currently a student at the University of Leuven where I study 
+                Mathematics and Physics. However, I've always had a great interest in programming. I first started out in 
+                Javascript, but didn't like it that much (because I was a total noob). Then I started programming in Python
+                and that remained my main language for several years. I learned how to create games, do data science and 
+                have some fun creating mathematical programs. Recently I've rediscovered Javascript and on this site I 
+                combine both Python and Javascript (+ CSS/HTML) to create my biggest project yet. Hope you like it &#128512. 
+                
+                If you want to know more about me, you can always read my <a href="/media/CV.pdf" download>CV</a>.
+            </p>
+        </div>
+        
+    </div>
+    <div class="aboutme-image">
+        <img src="/media/myself.png">
+    </div>
+    
+</div>
+
+<div class="main-section" id="news">
+    <h2>News</h2>
+    <p>
+        You can follow my progress through the news! Check out what I added recently or see the progress of my site 
+        from start to finish.
+    </p>
+    <div class="articles">
+        {% for article in news %}
+            {% include "main/article.html" with article=article %}
+        {% endfor %}
+    </div>
+    
+    <a href="{% url 'news' %}" class="btn btn-primary">See more news &#8594</a>
+</div>
+
+{% endblock content %}
+
+
+

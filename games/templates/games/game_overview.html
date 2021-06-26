@@ -1,0 +1,49 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'games/style.css' %}"/>
+<script defer src="{% static 'main/project.js' %}" type="text/javascript"></script>
+<h1>{{ object.title }}</h1>
+<p>{{ object.how_to }}</p>
+
+{% if unity %}
+<ul>
+    {% if object.zip_windows.url is not None %}
+        <li><a href="{{ object.zip_windows.url }}">Download for windows</a></li>
+    {% endif %}
+    {% if object.zip_mac.url is not None %}
+    <li><a href="{{ object.zip_mac.url }}">Download for MAC</a></li>
+    {% endif %}
+    {% if object.zip_linux.url is not None %}
+        <li><a href="{{ object.zip_linux.url }}">Download for Linux</a></li>
+    {% endif %}
+</ul>
+
+{% elif variants|length > 1 %}
+    <div class="project-list">
+    {% for variant in variants %}
+
+        <a class="project" href="{{ variant.get_absolute_url }}">
+            <div class="project-inner">
+                <div class="project-front">
+                    <h1>{{variant.title}}</h1> 
+                    <img src="{{ variant.image.url }}">
+                </div>
+                <div class="project-back">
+                <h1>{{variant.title}}</h1> 
+                <p>{{variant.description}}</p> 
+                </div>
+            </div>
+        </a>
+
+    {% endfor %}
+    </div>
+
+{% else %}
+    {% for variant in variants %}
+       <a href="{{ variant.get_absolute_url }}" class="btn btn-primary">Play!</a>
+    {% endfor %}
+{% endif %}
+
+{% endblock content %}

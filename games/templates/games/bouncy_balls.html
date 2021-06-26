@@ -1,0 +1,26 @@
+{% extends 'games/general_game.html' %}
+{% load static %}
+
+{% block game %}
+<link rel="stylesheet" type="text/css" href="{% static 'games/bouncy_balls.css' %}"/>
+<script defer type="text/javascript" src="{% static 'games/bouncy_balls.js' %}"></script>
+
+<div id="game" class="game" style="display: table; margin: 0 auto;">
+    <div id="game-information">
+        <div class="time-information" id= "time-info">
+            Time: <span id="time">0</span>
+        </div>
+        <div id="boost-information">
+
+        </div>
+        
+        <div id="add-enemy-information">
+            
+        </div>
+    </div>
+    <canvas id="game-canvas" width=800, height=500 style="border:1px solid #d33c3c;">
+
+    </canvas>
+</div>
+
+{% endblock game %}

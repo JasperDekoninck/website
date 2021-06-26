@@ -1,0 +1,40 @@
+.field {
+    border: 0.5px solid black;
+    float: left;
+}
+
+.field.number { 
+    font-weight: bold;
+    text-align: center;
+}
+
+.field.empty {
+    background-color: lightgrey;
+}
+
+.field.empty:hover {
+    background-color: rgb(241, 241, 241);
+}
+
+.button-row {
+    clear: both;
+}
+
+.board {
+    overflow: hidden;
+}
+
+#game-information {
+    width: 90%;
+    font-size: 2rem;
+
+}
+
+#time-information {
+    float: left
+}
+
+#bombs-information {
+    float: right;
+    text-align: right;
+}

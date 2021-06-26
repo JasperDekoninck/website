@@ -1,0 +1,64 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<script defer type="text/javascript" src="{% static 'random_projects/maze_generation.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'random_projects/maze_generation.css' %}"/>
+
+<h1>
+    Maze Generation
+</h1>
+
+<p>
+You can learn more about all these algorithms on 
+<a href="https://en.wikipedia.org/wiki/Maze_generation_algorithm" target="_blank">this Wikipedia page</a>.
+</p>
+
+<form style="margin: 20px;" id="maze-form">
+        <div class="form-group col-sm-6">
+            <label class="col-form-label"> Algorithm: </label>
+            <select class="form-control" id="sel1" style="width: 300px">
+                <option value="depth-first">Randomized depth-first search</option>
+                <option value="kruskal">Randomized Kruskal</option>
+                <option value="prim">Randomized Prim</option>
+                <option value="wilson">Wilson's Algorithm</option>
+            </select>
+        </div>
+
+        <div class="form-group col-sm-6">
+            <label class="col-form-label"> Speed: </label>
+            <select class="form-control" id="timeout" style="width: 300px">
+                <option value="0">Instantanious</option>
+                <option value="1">Fast</option>
+                <option value="10">Medium</option>
+                <option value="35">Slow</option>
+            </select>
+        </div>
+
+        <div class="form-group col-sm-6">
+            <label class="col-form-label">Width: </label>
+            <div>
+                <input type="number" max="50" min="2" id="width" value="30" class="form-control" style="width: 100px;" onchange="changeCanvasSize()"></input>
+            </div>
+            
+        </div>
+        <div class="form-group col-sm-6">
+            <label class="col-form-label">Height: </label>
+            <div>
+                <input type="number" max="50" min="2" id="height" value="20" class="form-control" style="width: 100px;" onchange="changeCanvasSize()"></input>
+            </div>
+        </div>
+
+        <button class="btn btn-primary" type="submit">Generate!</button>
+        <a class="btn btn-primary" id="astar-button" onclick="Astar()">Solve</a>
+        <a id="downloadLnk" download="Maze.jpg" class="btn btn-primary">Download</a>
+    </form>
+    
+<div style="display: table; margin: 0 auto;">
+    <canvas id="generation-canvas" width=600, height=400  style="border: 1px solid black">
+    </canvas>
+    
+</div>
+
+{% endblock content %}

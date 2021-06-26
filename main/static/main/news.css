@@ -1,0 +1,146 @@
+/* CSS file for news articles */
+.articles {
+    margin: auto;
+    width: 100%;
+    max-width: 800px;
+
+}
+
+.news-article {
+    text-align: left;
+    box-shadow: 0 0 10px var(--secondary-color);
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-family: sans-serif;
+    overflow: hidden;
+    transition: all 0.4s ease-in-out;
+}
+
+.news-article:hover {
+    transform: scale(1.1);
+    transition: all 0.4s ease-in-out;
+}
+
+.news-article .information {
+    margin: 20px;
+}
+
+.news-article .title {
+    font-size: 2rem;
+    font-weight: 500;
+}
+
+.news-article .date {
+    font-style: italic;
+    font-size: 0.7rem;
+}
+
+/* Icon before the date */
+.news-article .date::before {
+    font-family: FontAwesome;
+    margin-right: 5px;
+    content: "\f133";
+}
+
+.news-article .description {
+    font-size: 0.85rem;
+    position: relative;
+    margin: 1.5rem 0 0;
+}
+
+/* Animation before description */
+.news-article .description::before {
+    content: "";
+    height: 5px;
+    margin-bottom: 10px;
+    width: 0px;
+    top: -0.75rem;
+    position: absolute;
+    background: var(--secondary-color);
+    border-radius: 3px;
+    transition: all 0.4s ease-out;
+}
+
+.news-article:hover .description::before {
+    width: 120px;
+    transition: all 0.4s ease-out;
+}
+
+.news-article .green-balk {
+    display: none;
+}
+
+.news-article .image-container {
+    background-color: rgba(0, 0, 0, .2);
+}
+
+.news-article img {
+    height: 250px;
+    width: 250px;
+    object-fit: cover;
+    transition: all 0.5s;
+}
+
+.news-article .left-img {
+    float: left;
+    margin-right: 20px;
+}
+
+.news-article .right-img {
+    float: right;
+    margin-left: 20px;
+}
+
+.news-article:hover .bar .filledbar{
+    width: 150px;
+    transition: width 0.4s ease-out;
+}
+
+.news-article .information div {
+    margin-top: 15px;
+}
+
+.date-thought {
+    float: left;
+}
+
+.tag {
+    font-size: 1.1rem;
+    font-style: italic;
+    margin-right: 10px;
+    float: right;
+}
+
+.tag::before {
+    font-family: FontAwesome;
+    margin-right: 5px;
+    content: "\f02b";
+}
+
+
+/* Small screens: replace image by a green bar */
+@media (max-width: 740px) {
+
+    .news-article img {
+        display: none;
+    }
+    
+    .news-article .green-balk {
+        display: block;
+        width: 20px; 
+        height: 250px;
+        float: left;
+        background-color: var(--secondary-color);
+        margin-right: 10px;
+    }
+
+    .news-article:hover .information {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+}
+
+.center-paginator {
+    display: flex;
+    justify-content: center;
+}

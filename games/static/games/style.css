@@ -1,0 +1,123 @@
+.highscore-element {
+    font-size: 1.8rem;
+}
+.highscore-list {
+    display: inline-block;
+    text-align: left;
+    padding-bottom: 20px;
+}
+
+.sidebar-highscores {
+    padding: 10px; 
+    margin-bottom: 20%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.125);
+    border-radius: 10px;
+    margin-top: 30px;
+}
+
+.div-sidebar {
+    width: 300px; 
+    float: left; 
+}
+
+.select-option {
+    width: 200px;
+}
+
+@media only screen and (max-width: 590px) {
+    .select-option {
+        margin-left: 20px;
+    }  
+ }
+
+@media only screen and (max-width: 1080px) {
+    .div-sidebar {
+        float: none;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    #title-highscores {
+        text-align: center;
+    }    
+ }
+
+
+.game-overviews {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.game-overview-container {
+    width: 20%;
+    min-width: 300px;
+    border: 2px solid rgba(0, 0, 0, 0.125);
+    border-radius: 4px;
+    text-align: center;
+    display: inline-block;
+    margin-right: 5px;
+    margin-top: 50px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    color: black;
+    transition:width 0.3s linear;
+}
+
+@keyframes on-hover-text {
+    0%   {height: 0px; opacity: 0;}
+    50%  {height: 200px; opacity: 0;}
+    100% {height: 200px; opacity: 1;}
+}
+
+@keyframes on-unhover-text {
+    0%   {height: 200px; opacity: 1;}
+    50%  {height: 200px; opacity: 0;}
+    100% {height: 0px; opacity: 0;}
+}
+
+@keyframes on-hover-extra-div {
+    0%   {height: 200px;}
+    100% {height: 0px;}
+}
+
+.game-overview-container:hover {
+    box-shadow: 0 0 5px var(--secondary-color);
+    text-decoration: none;
+    color: black;
+}
+
+.game-overview-title {
+    font-size: 1.6rem;
+    font-weight: 500;
+}
+
+.game-overview-image {
+    height: 150px;
+    max-width: 100%;
+    text-align:center;
+}
+
+.game-overview-text{
+    visibility:hidden;
+    opacity:0;
+    height: 0px;
+}
+
+.game-overview-container:hover {
+    width: 35%; 
+}
+
+.game-overview-container:hover .game-overview-text {
+    visibility: visible;
+    animation-name: on-hover-text;
+    animation-duration: 1s;
+    animation-fill-mode: forwards
+}
+
+.game-overview-container:hover + #extra-div {
+    animation-name: on-hover-extra-div;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards
+}
+

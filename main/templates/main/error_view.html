@@ -1,0 +1,34 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+
+{% if status == 404 %}
+<h2>You found my super secret page with all my passwords &#128561</h2>
+No just kidding, this is just a 404 - page not found. Make sure you typed everything correctly. 
+
+{% elif status == 500 %}
+<h1>500 - Server side error</h1>
+<p>
+    A mistake on my side, sorry this shouldn't be happening... You can <a href="{% url 'contact' %}">contact me</a> 
+    with the exact steps you took to get this error so I can fix it.
+</p>
+
+{% elif status == 400 %}
+<h1>400 - Bad Request Error</h1>
+<p>
+    The server doesn't understand your request unfortunately
+</p>
+
+{% elif status == 403 %}
+<h1>403 - Forbidden Error</h1>
+<p>
+    You can't go to this page.
+</p>
+
+{% endif %}
+
+{% endblock content %}
+
+
+

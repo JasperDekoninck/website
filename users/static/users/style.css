@@ -1,0 +1,91 @@
+.login-section {
+    max-width: 500px;
+    min-width: 300px;
+}
+
+:root {
+    --main-color: rgb(40, 51, 59);
+    --secondary-color: rgb(97, 137, 48);
+    --secondary-color-select: rgb(66, 92, 32);
+    --secondary-color-shadow: rgb(97, 137, 48, 0.3);
+    --tertiary-color: rgb(106, 110, 113);
+    --tertiary-color-select: rgb(71, 73, 75);
+    --tertiary-color-shadow: rgb(106, 110, 113, 0.3);
+}
+
+
+.profile-container {
+    
+}
+
+.title {
+    font-size: 24px;
+    border-bottom: 1px solid lightgrey;
+    margin-bottom: 20px;
+    margin-left: -10px;
+}
+
+.profile-left-section, 
+.profile-right-section {
+    width: 400px;
+    padding: 10px;
+    text-align: left;
+    padding-left: 20px;
+    margin-right: 20px;
+    padding-top: 0px;
+    float: left;
+}
+@media only screen and (max-width: 740px) {
+    .profile-right-sectio,
+    .profile-left-section {
+        float: none;
+    }
+ }
+
+.profile-info-section {
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.friend {
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: 10px;
+    padding-right: 30px;
+    padding-left: 10px;
+    padding-bottom: 40px;
+    padding-top: 10px;
+    font-size: 20px;
+    
+}
+
+.friend-button {
+    float: right
+}
+
+.friend-text {
+    float: left
+}
+
+.variant-section {
+    font-size: 16px;
+}
+
+.profile-form {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+.btn.active.focus,
+.btn.active:focus,
+.btn.focus,
+.btn.focus:active,
+.btn:active:focus,
+.btn:focus {
+  outline: 0 !important;
+  outline-offset: 0  !important;
+  background-image: none  !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none  !important;
+}

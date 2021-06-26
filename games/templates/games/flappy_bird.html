@@ -1,0 +1,43 @@
+{% extends 'games/general_game.html' %}
+{% load static %}
+
+{% block game %}
+<link rel="stylesheet" type="text/css" href="{% static 'games/flappy_bird.css' %}"/>
+
+<script defer type="text/javascript" src="{% static 'games/flappy_bird.js' %}">
+</script>
+<script defer type="text/javascript" src="{% static 'games/flappy_bird_play.js' %}">
+</script>
+<script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+
+<div id="game" class="game" style="display: table; margin: 0 auto">
+    <div id="game-information">
+        <div id="score-information">
+        </div>
+        <div id="gameover">
+            
+        </div>
+    </div>
+    <canvas id="game-canvas" width=288 height=404 style="border: 1px solid black">
+
+    </canvas>
+</div>
+
+<div style="display: none;" id="images-flappy">
+    <img src="/media/games/flappy_bird/blue1b.png" id="blue1"></img>
+    <img src="/media/games/flappy_bird/blue2b.png" id="blue2"></img>
+    <img src="/media/games/flappy_bird/blue3b.png" id="blue3"></img>
+    <img src="/media/games/flappy_bird/blue4b.png" id="blue4"></img>
+    <img src="/media/games/flappy_bird/red1b.png" id="red1"></img>
+    <img src="/media/games/flappy_bird/red2b.png" id="red2"></img>
+    <img src="/media/games/flappy_bird/red3b.png" id="red3"></img>
+    <img src="/media/games/flappy_bird/red4b.png" id="red4"></img>
+    <img src="/media/games/flappy_bird/yellow1b.png" id="yellow1"></img>
+    <img src="/media/games/flappy_bird/yellow2b.png" id="yellow2"></img>
+    <img src="/media/games/flappy_bird/yellow3b.png" id="yellow3"></img>
+    <img src="/media/games/flappy_bird/yellow4b.png" id="yellow4"></img>
+
+    <img src="/media/games/flappy_bird/pipe.png" id="pipe"></img>
+</div>
+
+{% endblock game %}
