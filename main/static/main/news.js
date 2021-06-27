@@ -4,7 +4,6 @@ for(var i = 0; i < news_articles.length; i++) {
     var height = news_articles[i].offsetHeight
     max_height = Math.max(max_height, height)
 }
-console.log(max_height)
 
 for(var i = 0; i < news_articles.length; i++) {
     var img = news_articles[i].getElementsByTagName("img")[0]
