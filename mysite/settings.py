@@ -32,8 +32,6 @@ DEBUG = os.getenv("DEBUG", "True") == "True"
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 ADMINS = [('Jasper', os.getenv("MY_EMAIL", None))]
 
-DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "True") == "True"
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -86,20 +84,7 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
-if DEVELOPMENT_MODE:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'mydb',
-            'USER': 'dbadmin',
-            'PASSWORD': 'password',
-            'HOST': '127.0.0.1',
-            'PORT': '3306',
-        }
-    }
-else:
-    DATABASES = {
+DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
             'NAME': os.getenv("DATABASE_NAME", "mydb"),
@@ -108,6 +93,7 @@ else:
             'HOST': os.getenv("DATABASE_HOST", "127.0.0.1"),
         }
     }
+    
 
 
 # Password validation
