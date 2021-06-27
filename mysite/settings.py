@@ -89,13 +89,13 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 if DEVELOPMENT_MODE:
     DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'db_mysite2',
-        'USER': 'postgres',
-        'PASSWORD': 'a',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'mydb',
+            'USER': 'dbadmin',
+            'PASSWORD': 'password',
+            'HOST': '127.0.0.1',
+            'PORT': '3306',
         }
     }
 elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
