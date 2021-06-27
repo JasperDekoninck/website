@@ -13,12 +13,12 @@
     margin-bottom: 30px;
     font-family: sans-serif;
     overflow: hidden;
-    transition: all 0.4s ease-in-out;
+    transition: transform 0.4s ease-in-out;
 }
 
 .news-article:hover {
     transform: scale(1.1);
-    transition: all 0.4s ease-in-out;
+    transition: transform 0.4s ease-in-out;
 }
 
 .news-article .information {
@@ -58,12 +58,12 @@
     position: absolute;
     background: var(--secondary-color);
     border-radius: 3px;
-    transition: all 0.4s ease-out;
+    transition: width 0.4s ease-out;
 }
 
 .news-article:hover .description::before {
     width: 120px;
-    transition: all 0.4s ease-out;
+    transition: width 0.4s ease-out;
 }
 
 .news-article .green-balk {
@@ -78,7 +78,7 @@
     height: 250px;
     width: 250px;
     object-fit: cover;
-    transition: all 0.5s;
+    transition: width height 0.5s;
 }
 
 .news-article .left-img {
