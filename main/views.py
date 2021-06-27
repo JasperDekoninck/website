@@ -40,9 +40,7 @@ def contact_view(request):
             except SMTPException:
                 messages.add_message(request, messages.ERROR, """
                                 You message didn't get through. 
-                                Try to contact me later or send me an email to 
-                                <a href="mailto: jasper.dekoninck999@gmail.com">jasper.dekoninck999@gmail.com</a>
-                                """)
+                                Try to contact me later or send me an email to """ + os.getenv("MY_EMAIL", ""))
 
         else:
             # contact form invalid.

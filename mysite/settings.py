@@ -151,11 +151,11 @@ LOGIN_URL = 'login'
 AUTH_USER_MODEL="users.User"
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv("MY_EMAIL", None) 
-EMAIL_HOST_PASSWORD = os.getenv("MY_EMAIL_PASSWORD", None)
+EMAIL_HOST_USER = 'apikey'
+EMAIL_HOST_PASSWORD = os.getenv('API_MAIL')
 
 SESSION_COOKIE_SECURE = os.getenv("HTTPS_SITE", "False") == "True"
 CSRF_COOKIE_SECURE = os.getenv("HTTPS_SITE", "False") == "True"
