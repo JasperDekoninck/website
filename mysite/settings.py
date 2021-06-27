@@ -98,11 +98,16 @@ if DEVELOPMENT_MODE:
             'PORT': '3306',
         }
     }
-elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
-    if os.getenv("DATABASE_URL", None) is None:
-        raise Exception("DATABASE_URL environment variable not defined")
+else:
     DATABASES = {
-        "default": dj_database_url.parse(os.environ.get("DATABASE_URL")),
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.getenv("DATABASE_NAME", "mydb"),
+            'USER': os.getenv("DATABASE_USER", "dbadmin"),
+            'PASSWORD': os.getenv("DATABASE_PASSWORD", "password"),
+            'HOST': os.getenv("DATABASE_HOST", "127.0.0.1"),
+            'PORT': os.getenv("DATABASE_PORT", "3306"),
+        }
     }
 
 
