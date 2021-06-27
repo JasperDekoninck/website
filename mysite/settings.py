@@ -84,10 +84,15 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
+
+database_name = os.getenv("DATABASE_USER", "mydb")
+if database_name != "mydb":
+    database_name += "$" + os.getenv("DATABASE_NAME", "mydb")
+    
 DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.getenv("DATABASE_USER", "dbadmin") + "$" + os.getenv("DATABASE_NAME", "mydb"),
+            'NAME': database_name,
             'USER': os.getenv("DATABASE_USER", "dbadmin"),
             'PASSWORD': os.getenv("DATABASE_PASSWORD", "password"),
             'HOST': os.getenv("DATABASE_HOST", "127.0.0.1"),
