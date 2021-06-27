@@ -6,6 +6,8 @@ from django.core.mail import send_mail
 from django.contrib import messages
 from smtplib import SMTPException
 import os
+import sendgrid
+from sendgrid.helpers.mail import Mail
 
 
 # Create your views here.
@@ -28,6 +30,7 @@ def contact_view(request):
         contact_form = ContactForm(request.POST)
         if contact_form.is_valid():
             # Send the mail, from myself to myself with subject containing information on who to send back to.
+            """
             try: 
                 send_mail(
                         f'MESSAGE FROM {contact_form.cleaned_data["name"]}, EMAIL {contact_form.cleaned_data["email"]}',
@@ -38,10 +41,25 @@ def contact_view(request):
                 )
                 messages.add_message(request, messages.SUCCESS, "Message successfully sent")
             except SMTPException:
+                messages.add_message(request, messages.ERROR, "
+                                You message didn't get through. 
+                                Try to contact me later or send me an email to " + os.getenv("MY_EMAIL", ""))
+            """
+            
+            message = Mail(
+                from_email="jasper.dekoninck.site@gmail.com",
+                to_emails="jasper.dekoninck.site@gmail.com",
+                subject=f'MESSAGE FROM {contact_form.cleaned_data["name"]}, EMAIL {contact_form.cleaned_data["email"]}',
+                html_content=contact_form.cleaned_data["message"]
+            )
+            try:
+                sg = sendgrid.SendGridAPIClient(os.environ.get("API_MAIL"))
+                sg.send(message)
+                messages.add_message(request, messages.SUCCESS, "Message successfully sent")
+            except Exception:
                 messages.add_message(request, messages.ERROR, """
                                 You message didn't get through. 
                                 Try to contact me later or send me an email to """ + os.getenv("MY_EMAIL", ""))
-
         else:
             # contact form invalid.
             messages.add_message(request, messages.ERROR, "Contact form was invalid")
