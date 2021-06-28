@@ -99,15 +99,10 @@ function calculate (game_change) {
 
     highscore_divs = document.getElementsByClassName("highscore-div")
     for (const div of highscore_divs) {
-        if (div.id.endsWith(variant)) {
+        if (div.id.endsWith("-" + variant)) {
             div.style.display = "block"
         } else {
             div.style.display = "none"
         }
-    }
-    
-    if (document.getElementById("mainbar-highscores").clientHeight > 300) {
-        document.getElementById("div-sidebar").style.height = 
-                        document.getElementById("mainbar-highscores").clientHeight + "px"
     }
 }

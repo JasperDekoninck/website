@@ -9,7 +9,7 @@
 <p id="game-post" style="display: none">{{ score_variant.game.pk }}</p>
 
 <h1 id="title-highscores">Highscores</h1>
-<div id="div-sidebar" class="div-sidebar">
+<div id="div-sidebar">
     <div class="sidebar-highscores">
         <form>
             <div class="form-group row" onchange="calculate(true)">
@@ -59,7 +59,7 @@
     </div>
 </div>
 
-<div style="text-align: center;" id="mainbar-highscores">
+<div id="mainbar-highscores">
     <div id="global">
         {% for variant, top_score in top_scores.items %}
             <div id="global-{{variant.pk}}" class="highscore-div">
