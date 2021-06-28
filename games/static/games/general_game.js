@@ -26,6 +26,10 @@ function end_game(score) {
 
 function end_game_no_score() {
     document.getElementById("end-buttons").style.visibility = "visible"
-    document.getElementById("submit-score-not-logged").style.visibility = "hidden"
-    document.getElementById("highscore-button").style.visibility = "hidden"
+    if (document.getElementById("submit-score-not-logged") != null) {
+        document.getElementById("submit-score-not-logged").style.visibility = "hidden"
+    } 
+    if (document.getElementById("highscore-button") != null) {
+        document.getElementById("highscore-button").style.visibility = "hidden"
+    }
 }
