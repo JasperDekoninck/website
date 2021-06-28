@@ -2,9 +2,7 @@ from django.shortcuts import render
 from .models import News
 from django.views.generic import ListView
 from .forms import ContactForm
-from django.core.mail import send_mail
 from django.contrib import messages
-from smtplib import SMTPException
 import os
 import sendgrid
 from sendgrid.helpers.mail import Mail
@@ -30,22 +28,6 @@ def contact_view(request):
         contact_form = ContactForm(request.POST)
         if contact_form.is_valid():
             # Send the mail, from myself to myself with subject containing information on who to send back to.
-            """
-            try: 
-                send_mail(
-                        f'MESSAGE FROM {contact_form.cleaned_data["name"]}, EMAIL {contact_form.cleaned_data["email"]}',
-                        contact_form.cleaned_data["message"],
-                        os.getenv("MY_EMAIL", None),
-                        [os.getenv("MY_EMAIL", None)],
-                        fail_silently=False,
-                )
-                messages.add_message(request, messages.SUCCESS, "Message successfully sent")
-            except SMTPException:
-                messages.add_message(request, messages.ERROR, "
-                                You message didn't get through. 
-                                Try to contact me later or send me an email to " + os.getenv("MY_EMAIL", ""))
-            """
-            
             message = Mail(
                 from_email="jasper.dekoninck.site@gmail.com",
                 to_emails="jasper.dekoninck.site@gmail.com",
@@ -60,6 +42,7 @@ def contact_view(request):
                 messages.add_message(request, messages.ERROR, """
                                 You message didn't get through. 
                                 Try to contact me later or send me an email to """ + os.getenv("MY_EMAIL", ""))
+
         else:
             # contact form invalid.
             messages.add_message(request, messages.ERROR, "Contact form was invalid")
