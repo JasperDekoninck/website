@@ -1,0 +1,158 @@
+{% extends 'games/general_game.html' %}
+{% load static %}
+
+{% block game %}
+<link rel="stylesheet" type="text/css" href="{% static 'games/whist.css' %}"/>
+<script defer type="text/javascript" src="{% static 'games/whist.js' %}"></script>
+
+
+<div id="game" class="game">
+    <div class="ai-and-choices">
+        <div id="trump-card-all">
+            <div id="trump-card-info">
+                Trump card
+            </div>
+            <div id="trump-card">
+    
+            </div>
+        </div>
+
+        <div id="previous-trick-all">
+            <div id="previous-trick-info">
+                Previous Trick
+            </div>
+            <div id="trick-cards">
+                <div class="trick-card" id="trick-card-0">
+    
+                </div>
+                <div class="trick-card" id="trick-card-1">
+        
+                </div>
+                <div class="trick-card" id="trick-card-2">
+        
+                </div>
+                <div class="trick-card" id="trick-card-3">
+        
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class="card-turn" id="card-turn-0">
+
+        </div>
+        <div class="card-turn" id="card-turn-1">
+
+        </div>
+        <div class="card-turn" id="card-turn-2">
+
+        </div>
+        <div class="card-turn" id="card-turn-3">
+
+        </div>
+
+        <div class="player-info" id="player-info-0">
+            <p class="name-player" id="name-player-0"></p>
+            <div class="dealer-turn">
+                <div class="not-dealer-player" id="dealer-player-0"></div>
+                <div class="not-turn-player" id="turn-player-0"></div>
+            </div>
+            <p class="score-player-now">
+                Game: <span id="score-player-now-0">0</span>
+            </p>
+            <p class="score-player-overall">
+                Overall: <span id="score-player-overall-0">0</span>
+            </p>
+            <p class="choice-player-info">
+                <span id="choice-player-info-0"></span>
+            </p>
+            
+        </div>
+        <div class="player-info" id="player-info-1">
+            <p class="name-player" id="name-player-1"></p>
+            <div class="dealer-turn">
+                <div class="not-dealer-player" id="dealer-player-1"></div>
+                <div class="not-turn-player" id="turn-player-1"></div>
+            </div>
+            <p class="score-player-now">
+                Game: <span id="score-player-now-1">0</span>
+            </p>
+            <p class="score-player-overall">
+                Overall: <span id="score-player-overall-1">0</span>
+            </p>
+            <p class="choice-player-info">
+                <span id="choice-player-info-1"></span>
+            </p>
+            
+        </div>
+        <div class="player-info" id="player-info-2">
+            <p class="name-player" id="name-player-2"></p>
+            <div class="dealer-turn">
+                <div class="not-dealer-player" id="dealer-player-2"></div>
+                <div class="not-turn-player" id="turn-player-2"></div>
+            </div>
+            <p class="score-player-now">
+                Game: <span id="score-player-now-2">0</span>
+            </p>
+            <p class="score-player-overall">
+                Overall: <span id="score-player-overall-2">0</span>
+            </p>
+            <p class="choice-player-info">
+                <span id="choice-player-info-2"></span>
+            </p>
+            
+        </div>
+        <div class="player-info" id="player-info-3">
+            <p class="name-player" id="name-player-3"></p>
+            <div class="dealer-turn">
+                <div class="not-dealer-player" id="dealer-player-3"></div>
+                <div class="not-turn-player" id="turn-player-3"></div>
+            </div>
+            <p class="score-player-now">
+                Game: <span id="score-player-now-3">0</span>
+            </p>
+            <p class="score-player-overall">
+                Overall: <span id="score-player-overall-3">0</span>
+            </p>
+            <p class="choice-player-info">
+                <span id="choice-player-info-3"></span>
+            </p>
+        </div>
+
+        <div id="choice-menu" style="display: none">
+            <p class="option" value="0">Pass</p>
+            <p class="option" value="1">Ask</p>
+            <p class="option" value="2">Follow</p>
+            <div class="dropdown">
+                <p class="option-dropdown dropdown-toggle" type="button" id="dropdownAbondance" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Abondance
+                </p>
+                <div class="dropdown-menu" aria-labelledby="dropdownAbondance">
+                  <p class="option" value="3">Clubs</p>
+                  <p class="option" value="4">Diamonds</p>
+                  <p class="option" value="5">Spades</p>
+                  <p class="option" value="6">Hearts</p>
+                </div>
+              </div>
+              <p class="option" value="7">Misery</p>
+              <p class="option" value="8">Open Misery</p>
+              <div class="dropdown">
+                <p class="option-dropdown dropdown-toggle" type="button" id="dropdownGrandSlam" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Grand Slam
+                </p>
+                <div class="dropdown-menu" aria-labelledby="dropdownGrandSlam">
+                  <p class="option" value="9">Clubs</p>
+                  <p class="option" value="10">Diamonds</p>
+                  <p class="option" value="11">Spades</p>
+                  <p class="option" value="12">Hearts</p>
+                </div>
+              </div>
+
+        </div>
+
+    </div>
+
+    <div class="hand-player" id="hand-player">
+    </div>
+</div>
+{% endblock game %}

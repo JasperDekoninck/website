@@ -1,0 +1,424 @@
+.game {
+    width: 1000px;
+    height: 600px;
+    background: rgb(43, 43, 43);
+    margin: 0 auto;
+    padding: 10px;
+    overflow: hidden;
+}
+
+.dropdown-menu {
+    background: rgb(43, 43, 43);
+}
+
+.dropdown-menu .option {
+    padding-left: 15px;
+}
+
+.card {
+    height: 100px;
+    width: 71px;
+    border-radius: 5px;
+    border: 1px solid black;
+    margin: 0 5px;
+}
+
+.card.disabled {
+    background-color: grey;
+    transition: background-color 0.2s linear;
+    cursor: default;
+}
+
+#trump-card-all, #previous-trick-all {
+    position: absolute;
+    text-align: center;
+    padding: 0 10px;
+    padding-top: 5px;
+    border-radius: 10px;
+}
+
+#previous-trick-all {
+    bottom: 20px;
+    right: 20px;
+    height: 100px;
+    width: 150px;
+}
+
+#trump-card-all {
+    bottom: 20px;
+    left: 20px;
+    height: 100px;
+}
+
+#trump-card {
+    transform: scale(0.6, 0.6);
+    margin-bottom: -10px;
+}
+
+.trick-card {
+    transform: scale(0.6, 0.6);
+    margin: 0 -30px;
+    margin-bottom: -10px;
+}
+
+#trick-cards {
+    display: flex;
+    justify-content: center;
+}
+
+#trump-card-info, #previous-trick-info {
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: -10px;
+}
+
+#choice-menu {
+    position: absolute;
+    top: 280px;
+    left: 620px;
+}
+
+
+.clickable-card {
+    transition: 0.4s;
+    margin-top: 0px;
+    cursor: pointer;
+}
+
+.clickable-card:hover {
+    margin-top: -20px;
+}
+.clickable-card.disabled:hover {
+    margin-top: 0 !important;
+}
+
+.hand-player {
+    display: flex;
+    justify-content: center;
+}
+
+.ai-and-choices {
+    height: 480px;
+    position: relative;
+}
+
+.animation-card {
+    transition: all 0.3s linear;
+    height: 0px;
+    width: 0px;
+    border: 0px;
+    margin: 0 0px;
+    visibility: hidden;
+}
+
+.option, .option-dropdown {
+    background: none;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    margin: 2px 0px;
+}
+
+.option.disabled {
+    color: grey;
+    cursor: default;
+}
+
+.option:hover {
+    color: grey;
+}
+
+.animation-card-text {
+    visibility: hidden;
+}
+
+.card-turn {
+    position: absolute;
+}
+
+#card-turn-0 {
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, 450%);
+    transition: transform 0.5s linear;
+}
+
+.animate#card-turn-0 {
+    transform: translate(-50%, -50%) rotate(359deg);
+    transition: transform 0.5s linear;
+}
+
+#card-turn-1 {
+    top: 50%;
+    left: 45%;
+    transform: translate(-600%, -50%);
+    transition: transform 0.5s linear;
+}
+
+.animate#card-turn-1 {
+    transform: translate(-50%, -50%) rotate(359deg);
+    transition: transform 0.5s linear;
+}
+
+#card-turn-2 {
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -500%);
+    transition: transform 0.5s linear;
+}
+
+.animate#card-turn-2 {
+    transform: translate(-50%, -50%) rotate(359deg);
+    transition: transform 0.5s linear;
+}
+
+#card-turn-3 {
+    top: 50%;
+    left: 55%;
+    transform: translate(550%, -50%);
+    transition: transform 0.5s linear;
+}
+
+.animate#card-turn-3 {
+    transform: translate(-50%, -50%) rotate(359deg);
+    transition: transform 0.5s linear;
+}
+
+.player-info {
+    position: absolute;
+    height: 120px;
+}
+
+#player-info-0 {
+    bottom: 10px;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+#player-info-1 {
+    top: 55%;
+    left: 50px;
+    transform: translate(0, -50%);
+}
+
+#player-info-2 {
+    top: 30px;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+#player-info-3 {
+    top: 55%;
+    right: 50px;
+    transform: translate(0, -50%);
+}
+
+.name-player {
+    font-weight: 700;
+    font-size: 17px;
+    text-align: center;
+    color:white;
+    margin-bottom: 0px;
+}
+
+.score-player-overall, .score-player-now, .choice-player-info {
+    color: white;
+    text-align: center;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.score-player-now {
+    margin-top: 5px;
+}
+
+.score-player-overall {
+    margin-top: -15px;
+}
+
+.choice-player-info {
+    margin-top: -10px;
+}
+
+.not-dealer-player {
+    display: inline-block;
+}
+
+.dealer-player {
+    font-size: 13px;
+    display: inline-block;
+    color:grey;
+    margin: 0 3px;
+}
+
+.dealer-player:before {
+    content:"\1F0A0";
+    margin: 0 3px;
+}
+
+.dealer-turn {
+    text-align: center;
+}
+
+.turn-player, .not-turn-player {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    border-radius: 50%;
+    margin: 0 3px;
+}
+
+.not-turn-player {
+    background-color:rgba(15, 15, 15, 0.527);
+}
+
+.turn-player {
+    background-color: rgba(67, 125, 233, 0.644);
+}
+
+
+.suit-symbol-1, .suit-symbol-3, 
+.rank-symbol-1, .rank-symbol-2 {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.rank-symbol-1, .rank-symbol-2, .suit-symbol-1, .suit-symbol-2, .suit-symbol-3 {
+    position: absolute;
+}
+
+.suit-symbol-2 {
+    font-size: 50px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.suit-symbol-3, .rank-symbol-2 {
+    text-align: right;
+    transform: scale(-1, -1);
+    -moz-transform: scale(-1, -1);
+    -webkit-transform: scale(-1, -1);
+    -o-transform: scale(-1, -1);
+    -ms-transform: scale(-1, -1);
+}
+
+.rank-symbol-1 {
+    top: 0px;
+    left: 5px;
+}
+
+.rank-symbol-2 {
+    top: 75px;
+    right: 2px;
+}
+
+.suit-symbol-1 {
+    top: 15px;
+    left: 5px;
+}
+
+.suit-symbol-2 {
+    top: 12px;
+    left: 15px;
+}
+
+.suit-symbol-3 {
+    top: 60px;
+    right: 2px;
+}
+
+.clubs .rank-symbol-1, .spades .rank-symbol-1, 
+.clubs .rank-symbol-2, .spades .rank-symbol-2, 
+.clubs .suit-symbol-1, .spades .suit-symbol-1,
+.clubs .suit-symbol-2, .spades .suit-symbol-2,
+.clubs .suit-symbol-3, .spades .suit-symbol-3 {
+    color: black;
+}
+
+.hearts .rank-symbol-1, .diamonds .rank-symbol-1, 
+.hearts .rank-symbol-2, .diamonds .rank-symbol-2, 
+.hearts .suit-symbol-1, .diamonds .suit-symbol-1,
+.hearts .suit-symbol-2, .diamonds .suit-symbol-2,
+.hearts .suit-symbol-3, .diamonds .suit-symbol-3 {
+    color: rgb(190, 22, 22);
+}
+
+.disabled.hearts .rank-symbol-1, .disabled.diamonds .rank-symbol-1, 
+.disabled.hearts .rank-symbol-2, .disabled.diamonds .rank-symbol-2, 
+.disabled.hearts .suit-symbol-1, .disabled.diamonds .suit-symbol-1,
+.disabled.hearts .suit-symbol-2, .disabled.diamonds .suit-symbol-2,
+.disabled.hearts .suit-symbol-3, .disabled.diamonds .suit-symbol-3 {
+    color: rgb(124, 16, 16);
+}
+
+.clubs .suit-symbol-1:before, .clubs .suit-symbol-2:before, .clubs .suit-symbol-3:before {
+    content:"\2663";
+}
+
+.hearts .suit-symbol-1:before, .hearts .suit-symbol-2:before, .hearts .suit-symbol-3:before {
+    content:"\2665";
+}
+
+.spades .suit-symbol-1:before, .spades .suit-symbol-2:before, .spades .suit-symbol-3:before {
+    content:"\2660";
+}
+
+.diamonds .suit-symbol-1:before, .diamonds .suit-symbol-2:before, .diamonds .suit-symbol-3:before {
+    content:"\2666";
+}
+
+
+
+.rank-1 .rank-symbol-1:before, .rank-1 .rank-symbol-2:before {
+    content:"A";
+} 
+
+.rank-2 .rank-symbol-1:before, .rank-2 .rank-symbol-2:before {
+    content:"2";
+} 
+
+.rank-3 .rank-symbol-1:before, .rank-3 .rank-symbol-2:before {
+    content:"3";
+} 
+
+.rank-4 .rank-symbol-1:before, .rank-4 .rank-symbol-2:before {
+    content:"4";
+} 
+
+.rank-5 .rank-symbol-1:before, .rank-5 .rank-symbol-2:before {
+    content:"5";
+} 
+
+.rank-6 .rank-symbol-1:before, .rank-6 .rank-symbol-2:before {
+    content:"6";
+} 
+
+.rank-7 .rank-symbol-1:before, .rank-7 .rank-symbol-2:before {
+    content:"7";
+} 
+
+.rank-8 .rank-symbol-1:before, .rank-8 .rank-symbol-2:before {
+    content:"8";
+} 
+
+.rank-9 .rank-symbol-1:before, .rank-9 .rank-symbol-2:before {
+    content:"9";
+} 
+
+.rank-10 .rank-symbol-1:before, .rank-10 .rank-symbol-2:before {
+    content:"10";
+} 
+
+.rank-11 .rank-symbol-1:before, .rank-11 .rank-symbol-2:before {
+    content:"B";
+} 
+
+.rank-12 .rank-symbol-1:before, .rank-12 .rank-symbol-2:before {
+    content:"Q";
+} 
+
+.rank-13 .rank-symbol-1:before, .rank-13 .rank-symbol-2:before {
+    content:"K";
+} 
