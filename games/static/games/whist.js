@@ -9,15 +9,15 @@ const POSSIBILITIES = {
     Pass: 0, 
     Ask: 1, 
     Follow: 2, 
-    Abondance_Clubs: 3, 
+    Abondance_Spades: 3, 
     Abondance_Diamonds: 4, 
-    Abondance_Spades: 5, 
+    Abondance_Clubs: 5, 
     Abondance_Hearts: 6, 
     Misery: 7,
     Open_Misery: 8, 
-    Grand_Slam_Clubs: 9, 
+    Grand_Slam_Spades: 9, 
     Grand_Slam_Diamonds: 10, 
-    Grand_Slam_Spades: 11, 
+    Grand_Slam_Clubs: 11, 
     Grand_Slam_Hearts: 12, 
     Trull: 13
 }
@@ -208,7 +208,11 @@ class AIDecider {
     }
 
     decide_possibility(whist) {
-        return POSSIBILITIES.Pass
+        if (this.hand.possibility !== null) {
+            return POSSIBILITIES.Pass
+        } else {
+            return POSSIBILITIES.Pass
+        }   
     }
 }
 
@@ -230,6 +234,7 @@ class Whist {
         this.start_round_chosen = 0
         this.current_trick = new Trick(this.trump)
         this.previous_trick = new Trick(this.trump)
+        this.asked_again = false
         
         this.time_last_action = performance.now() - TIME_BETWEEN_ACTIONS
         this.ended = false
@@ -242,9 +247,17 @@ class Whist {
             if (whist.allowedPossibilities().includes(Number($(this).attr("value"))) &&
                 whist.turn == 0) {
                     whist.hands[0].possibility = Number($(this).attr("value"))
-                    document.getElementById(`choice-player-info-${whist.turn}`).innerHTML = Object.keys(POSSIBILITIES)[Number($(this).attr("value"))]
+                    document.getElementById(`choice-player-info-${whist.turn}`).innerHTML = Object.keys(POSSIBILITIES)[Number($(this).attr("value"))].replaceAll("_", " ")
                     whist.updateStartRound()
-                    document.getElementById("choice-menu").style.display = "none"
+                    document.getElementById("choice-menu-1").style.display = "none"
+            }
+        })
+        $(".option-2").click(function() {
+            if (whist.turn == 0) {
+                whist.hands[0].possibility = Number($(this).attr("value"))
+                document.getElementById(`choice-player-info-${whist.turn}`).innerHTML = Object.keys(POSSIBILITIES)[Number($(this).attr("value"))].replaceAll("_", " ")
+                whist.updateStartRound()
+                document.getElementById("choice-menu-2").style.display = "none"
             }
         })
     }
@@ -261,9 +274,21 @@ class Whist {
 
     allowedPossibilities() {
         var max_score = this.getVariant()
+        if (max_score === POSSIBILITIES.Abondance_Spades + this.trump) {
+            max_score = POSSIBILITIES.Abondance_Hearts + 0.5
+        } else if (max_score === POSSIBILITIES.Grand_Slam_Spades + this.trump) {
+            max_score = POSSIBILITIES.Grand_Slam_Hearts + 0.5
+        }
+
         var allowed = [0]
-        for (var i = max_score + 1; i < POSSIBILITIES.Trull; i++) {
-            if (max_score != 0 || i != POSSIBILITIES.Follow) {
+        for (var i=0; i < POSSIBILITIES.Trull; i++) {
+            var score_element = i
+            if (score_element === POSSIBILITIES.Abondance_Spades + this.trump) {
+                score_element = POSSIBILITIES.Abondance_Hearts + 0.5
+            } else if (score_element === POSSIBILITIES.Grand_Slam_Spades + this.trump) {
+                score_element = POSSIBILITIES.Grand_Slam_Hearts + 0.5
+            }
+            if (score_element > max_score && (max_score != 0 || i != POSSIBILITIES.Follow)) {
                 allowed.push(i) 
             }
         }
@@ -286,13 +311,13 @@ class Whist {
         } else if (max_possibility === POSSIBILITIES.Follow) {
             score = (max_score_hand.score_game - 7) * 2
             n_winners = 2
-        } else if (POSSIBILITIES.Abondance_Clubs <= max_possibility && max_possibility <= POSSIBILITIES.Abondance_Hearts) {
+        } else if (POSSIBILITIES.Abondance_Spades <= max_possibility && max_possibility <= POSSIBILITIES.Abondance_Hearts) {
             score = Math.sign(max_score_hand.score_game - 8.5) * 15
         } else if (max_possibility === POSSIBILITIES.Misery) {
             score = - Math.sign(max_score_hand.score_game - 0.5) * 15
         } else if (max_possibility === POSSIBILITIES.Open_Misery) {
             score = - Math.sign(max_score_hand.score_game - 0.5) * 30
-        } else if (POSSIBILITIES.Grand_Slam_Clubs <= max_possibility && max_possibility <= POSSIBILITIES.Grand_Slam_Hearts) {
+        } else if (POSSIBILITIES.Grand_Slam_Spades <= max_possibility && max_possibility <= POSSIBILITIES.Grand_Slam_Hearts) {
             score = Math.sign(max_score_hand.score_game - 12.5) * 48
         } else if (max_possibility === POSSIBILITIES.Trull) {
             score = (max_score_hand.score_game - 7) * 2
@@ -357,6 +382,7 @@ class Whist {
         this.dealer.retrieveAll()
         this.start_turn = (this.start_turn + 1) % 4
         this.turn = this.start_turn
+        this.asked_again = false
         this.current_trick.clearCards()
         this.current_trick = new Trick(this.trump)
         this.previous_trick = new Trick(this.trump)
@@ -477,27 +503,65 @@ class Whist {
         this.turn = (this.turn + 1) % 4
         this.start_round_chosen += 1
         this.start_round = (this.start_round_chosen < 4)
-        if (!this.start_round) {
+        if (!this.start_round && !this.asked_again) {
+            this.asked_again = true
             var variant = this.getVariant()
+            if (variant === POSSIBILITIES.Ask) {
+                var follower = false
+                for (const hand of this.hands) {
+                    if (hand.possibility === POSSIBILITIES.Follow) {
+                        follower = true
+                        break
+                    }
+                }
+                if (!follower) {
+                    this.start_round_chosen -= 1
+                    this.start_round = true
+                    for (var i = 0; i < 4; i++) {
+                        if (this.hands[i].possibility === POSSIBILITIES.Ask) {
+                            this.turn = i
+                            break
+                        }
+                    }
+                    if (this.turn === 0) {
+                        document.getElementById("choice-menu-2").style.display = "block"
+                    }
+                }
+            }
+        } else if (!this.start_round) {
+            var variant = this.getVariant()
+            this.turn = this.start_turn
             if (variant == POSSIBILITIES.Pass) {
                 this.start()
             } else {
+                if (variant === POSSIBILITIES.Misery || variant == POSSIBILITIES.Open_Misery) {
+                    document.getElementById("trump-card").innerHTML = ""
+                    document.getElementById("trump-card-info").innerHTML = "No trump"
+                } else if (POSSIBILITIES.Abondance_Spades  <= variant && variant <= POSSIBILITIES.Abondance_Hearts) {
+                    this.trump = variant - POSSIBILITIES.Abondance_Spades
+                    this.trump_card = new Card(1, this.trump)
+                    document.getElementById("trump-card").innerHTML = HTMLCard(this.trump_card, false, "trump")
+                } else if (POSSIBILITIES.Grand_Slam_Spades  <= variant && variant <= POSSIBILITIES.Grand_Slam_Hearts) {
+                    this.trump = variant - POSSIBILITIES.Grand_Slam_Spades
+                    this.trump_card = new Card(1, this.trump)
+                    document.getElementById("trump-card").innerHTML = HTMLCard(this.trump_card, false, "trump")
+                }
                 for (var i = 0; i < 4; i++) {
                     var hand = this.hands[i]
                     if (hand.possibility < variant && (hand.possibility !== POSSIBILITIES.Ask || 
                         variant !== POSSIBILITIES.Follow)) {
                             hand.possibility = POSSIBILITIES.Pass
-                            document.getElementById(`choice-player-info-${i}`).innerHTML = Object.keys(POSSIBILITIES)[POSSIBILITIES.Pass]
+                            document.getElementById(`choice-player-info-${i}`).innerHTML = Object.keys(POSSIBILITIES)[POSSIBILITIES.Pass].replaceAll("_", " ")
                     } else {
                         hand.possibility = variant
                     }
-                    if ((POSSIBILITIES.Abondance_Clubs <= hand.possibility && POSSIBILITIES.Abondance_Hearts >= hand.possibility)) {
+                    if ((POSSIBILITIES.Abondance_Spades <= hand.possibility && POSSIBILITIES.Abondance_Hearts >= hand.possibility)) {
                         this.turn = i
-                        this.current_trick.extra_suit_requirement = hand.possibility - POSSIBILITIES.Abondance_Clubs
-                    } else if ((POSSIBILITIES.Grand_Slam_Clubs <= hand.possibility && POSSIBILITIES.Grand_Slam_Hearts >= hand.possibility)) {
+                        this.current_trick.extra_suit_requirement = hand.possibility - POSSIBILITIES.Abondance_Spades
+                    } else if ((POSSIBILITIES.Grand_Slam_Spades <= hand.possibility && POSSIBILITIES.Grand_Slam_Hearts >= hand.possibility)) {
                         this.turn = i
-                        this.current_trick.extra_suit_requirement = hand.possibility - POSSIBILITIES.Grand_Slam_Clubs
-                    }
+                        this.current_trick.extra_suit_requirement = hand.possibility - POSSIBILITIES.Grand_Slam_Spades
+                    } 
                 }
             }
         }
@@ -515,7 +579,7 @@ class Whist {
             }
             if (aces >= 3) {
                 hand.possibility = POSSIBILITIES.Trull
-                document.getElementById(`choice-player-info-${j}`).innerHTML = Object.keys(POSSIBILITIES)[POSSIBILITIES.Trull]
+                document.getElementById(`choice-player-info-${j}`).innerHTML = Object.keys(POSSIBILITIES)[POSSIBILITIES.Trull].replaceAll("_", " ")
                 var highest_other_val = 0
                 var highest_other_rank = 0
                 var highest_other_suit = 0
@@ -531,12 +595,15 @@ class Whist {
                                 highest_other_suit = card.suit
                                 partner = other_hand
                                 partner_index = i
+                                this.trump_card = card
+                                this.trump = card.suit
+                                document.getElementById("trump-card").innerHTML = HTMLCard(this.trump_card, false, "trump")
                             }
                         }
                     }
                 }
                 partner.possibility = POSSIBILITIES.Trull
-                document.getElementById(`choice-player-info-${partner_index}`).innerHTML = Object.keys(POSSIBILITIES)[POSSIBILITIES.Trull]
+                document.getElementById(`choice-player-info-${partner_index}`).innerHTML = Object.keys(POSSIBILITIES)[POSSIBILITIES.Trull].replaceAll("_", " ")
                 this.current_trick.extra_rank_requirement = highest_other_rank
                 this.current_trick.extra_suit_requirement = highest_other_suit
                 this.turn = (partner_index + 3) % 4
@@ -563,12 +630,12 @@ class Whist {
             if (this.hands[this.turn].type === TYPE.AI && 
                 performance.now() - this.time_last_action > TIME_BETWEEN_ACTIONS) {
                     this.hands[this.turn].possibility = this.ais[this.turn].decide_possibility(this) 
-                    document.getElementById(`choice-player-info-${this.turn}`).innerHTML = Object.keys(POSSIBILITIES)[this.hands[this.turn].possibility]
+                    document.getElementById(`choice-player-info-${this.turn}`).innerHTML = Object.keys(POSSIBILITIES)[this.hands[this.turn].possibility].replaceAll("_", " ")
                     this.time_last_action = performance.now()
                     this.updateStartRound()
                 }
-            else if (this.turn === 0) {
-                document.getElementById("choice-menu").style.display = "block"
+            else if (this.turn === 0 && this.hands[this.turn].possibility === null) {
+                document.getElementById("choice-menu-1").style.display = "block"
                 var allowed = this.allowedPossibilities()
                 $(".option").each(function() {
                     if (!allowed.includes(Number($(this).attr("value")))) {

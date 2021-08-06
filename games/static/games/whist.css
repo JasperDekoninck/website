@@ -73,7 +73,7 @@
     margin-bottom: -10px;
 }
 
-#choice-menu {
+.choice-menu {
     position: absolute;
     top: 280px;
     left: 620px;
@@ -112,7 +112,7 @@
     visibility: hidden;
 }
 
-.option, .option-dropdown {
+.option, .option-2, .option-dropdown {
     background: none;
     color: white;
     font-size: 14px;
@@ -121,12 +121,12 @@
     margin: 2px 0px;
 }
 
-.option.disabled {
+.option.disabled, .option-2.disabled {
     color: grey;
     cursor: default;
 }
 
-.option:hover {
+.option:hover, .option-2:hover {
     color: grey;
 }
 
