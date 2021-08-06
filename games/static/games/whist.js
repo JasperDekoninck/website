@@ -1,5 +1,6 @@
 const SUITS = ["spades", "diamonds", "clubs", "hearts"]
 const TIME_BETWEEN_ACTIONS = 600
+
 const TYPE = {
     AI: 0, 
     HUMAN: 1
@@ -173,8 +174,8 @@ class Trick {
         this.cards_hands = []
     }
 
-    scoreCard(card, trump_counts) {
-        if (trump_counts) {
+    scoreCard(card) {
+        if (this.trump !== null) {
             return card.getValue() * ((card.suit === this.trump) * 15 + (card.suit === this.cards_hands[0][0].suit))
         } else {
             return card.getValue() * (card.suit === this.cards_hands[0][0].suit)
@@ -182,11 +183,11 @@ class Trick {
         }
     }
 
-    decideWinner(trump_counts) {
+    decideWinner() {
         var max_val = -100
         var max_card_hand = null
         for (const card_hand of this.cards_hands) {
-            var score = this.scoreCard(card_hand[0], trump_counts)
+            var score = this.scoreCard(card_hand[0])
             if (score > max_val) {
                 max_val = score
                 max_card_hand = card_hand
@@ -216,11 +217,216 @@ class AIDecider {
     }
 }
 
-class Whist {
+
+class UIHandler {
     constructor() {
+
+    }
+
+    HTMLCard(card, clickable, before_id) {
+        if (clickable) {
+            return `
+            <a class="clickable-card card ${SUITS[card.suit]} rank-${card.rank}" id="${before_id}-${card.rank}-${card.suit}">
+                <span class="rank-symbol-1"></span>
+                <span class="suit-symbol-1"></span>
+                <span class="suit-symbol-2"></span>
+                <span class="suit-symbol-3"></span>
+                <span class="rank-symbol-2"></span>
+            </a>`
+        } else {
+            return `
+            <div class="card ${SUITS[card.suit]} rank-${card.rank}" id="${before_id}-${card.rank}-${card.suit}">
+                <span class="rank-symbol-1"></span>
+                <span class="suit-symbol-1"></span>
+                <span class="suit-symbol-2"></span>
+                <span class="suit-symbol-3"></span>
+                <span class="rank-symbol-2"></span>
+            </div>`
+        }
+    }
+
+    changeName(index, name) {
+        document.getElementById("name-player-" + index.toString()).innerHTML = name
+    }
+
+    setOptionFunction(whist) {
+        $(".option").click(function() {
+            if (whist.allowedPossibilities().includes(Number($(this).attr("value"))) && whist.turn == 0) {
+                whist.hands[0].possibility = Number($(this).attr("value"))
+                document.getElementById(`choice-player-info-${whist.turn}`).innerHTML = Object.keys(POSSIBILITIES)[Number($(this).attr("value"))].replaceAll("_", " ")
+                whist.updateStartRound()
+                document.getElementById("choice-menu-1").style.display = "none"
+            }
+        })
+    }
+
+    removeDisabledOption() {
+        $(".option").each(function() {
+            $(this).removeClass("disabled")
+        });
+    }
+
+    setOption2Function(whist) {
+        $(".option-2").click(function() {
+            if (whist.turn == 0) {
+                whist.hands[0].possibility = Number($(this).attr("value"))
+                document.getElementById(`choice-player-info-${whist.turn}`).innerHTML = Object.keys(POSSIBILITIES)[Number($(this).attr("value"))].replaceAll("_", " ")
+                whist.updateStartRound()
+                document.getElementById("choice-menu-2").style.display = "none"
+            }
+        })
+    }
+
+    setTurnImages(turn, start_turn) {
+        for (var i = 0; i < 4; i++) {
+            if (i === turn) {
+                $("#turn-player-" + i.toString()).removeClass("not-turn-player")
+                $("#turn-player-" + i.toString()).addClass("turn-player")
+            } else {
+                $("#turn-player-" + i.toString()).addClass("not-turn-player")
+                if ($("#turn-player-" + i.toString()).attr("class").includes("turn-player")) {
+                    $("#turn-player-" + i.toString()).removeClass("turn-player")
+                }
+            }
+
+            if (i === (start_turn + 3) % 4) {
+                $("#dealer-player-" + i.toString()).removeClass("not-dealer-player")
+                $("#dealer-player-" + i.toString()).addClass("dealer-player")
+            } else {
+                $("#dealer-player-" + i.toString()).addClass("not-dealer-player")
+                if ($("#dealer-player-" + i.toString()).attr("class").includes("dealer-player")) {
+                    $("#dealer-player-" + i.toString()).removeClass("dealer-player")
+                }
+            }
+        }
+    }
+
+    showHand(hand, whist) {
+        var html_element = document.getElementById("hand-player")
+        html_element.innerHTML = ""
+        for (const card of hand.cards) {
+            html_element.innerHTML += this.HTMLCard(card, true, "hand")
+        }
+        $(".clickable-card").click(function() {
+            var classList = $(this).attr("class")
+            var classArr = classList.split(/\s+/)
+            var suit = SUITS.findIndex(findExact(classArr[2]))
+            var rank = Number(classArr[3].split("-")[1])
+            for (const card of whist.hands[0].cards) {
+                if (card.suit === suit && card.rank === rank) {
+                    whist.humanPlayCard(card)
+                }
+            }
+        })
+    }
+
+    atStart(whist) {
+        this.setHTMLPreviousTrick(whist.previous_trick)
+        this.removeAnimationsCards()
+        for (var i = 0; i < 4; i++) {
+            document.getElementById(`score-player-now-${i}`).innerHTML = 0
+            document.getElementById(`choice-player-info-${i}`).innerHTML = ""
+        }
+        document.getElementById("trump-card").innerHTML = this.HTMLCard(whist.trump_card, false, "trump")
+        this.setTurnImages(whist.turn, whist.start_turn)
+        this.showHand(whist.hands[0], whist)
+        this.removeDisabledOption()
+    }
+
+    handlePlayCardHuman(card, hand) {
+        $(`#hand-${card.rank}-${card.suit}`).addClass("animation-card")
+        $(`#hand-${card.rank}-${card.suit} span`).addClass("animation-card-text")
+        $(`#hand-${card.rank}-${card.suit}`).click(function() {})
+        for (const card of hand.cards) {
+            $(`#hand-${card.rank}-${card.suit}`).removeClass("disabled")
+        }
+    }
+
+    removeAnimationsCards() {
+        for (var turn = 0; turn < 4; turn++) {
+            if ($("#card-turn-" + turn.toString()).hasClass("animate")) {
+                $("#card-turn-" + turn.toString()).removeClass("animate")
+            }
+        }
+    }
+
+    throwCard(card, turn) {
+        document.getElementById("card-turn-" + turn.toString()).innerHTML = this.HTMLCard(card, false, "trick")
+        $("#card-turn-" + turn.toString()).addClass("animate")
+    }
+
+    setHTMLPreviousTrick(previous_trick) {
+        for(var i = 0; i < 4; i++) {
+            if (previous_trick.cards_hands[i]) {
+                document.getElementById(`trick-card-${i}`).innerHTML = this.HTMLCard(previous_trick.cards_hands[i][0], false, "previous")
+            } else {
+                document.getElementById(`trick-card-${i}`).innerHTML = ""
+            }
+        }
+    }
+
+    endTrick(hands, previous_trick) {
+        for (var i = 0; i < 4; i++) {
+            document.getElementById(`score-player-now-${i}`).innerHTML = hands[i].score_game
+        }
+        for(var turn = 0; turn < 4; turn++) {
+            document.getElementById("card-turn-" + turn.toString()).innerHTML = ""
+        }
+        this.setHTMLPreviousTrick(previous_trick)
+    }
+
+    updateOverallScore(hands) {
+        for (var i = 0; i < 4; i++) {
+            document.getElementById(`score-player-overall-${i}`).innerHTML = hands[i].overall_score
+        }
+    }
+
+    showAskAgainChoiceMenu() {
+        document.getElementById("choice-menu-2").style.display = "block"
+    }
+
+    showMainOptionMenu() {
+        document.getElementById("choice-menu-1").style.display = "block"
+    }
+
+    updateTrumpCard(trump_card) {
+        if (trump_card === null) {
+            document.getElementById("trump-card").innerHTML = ""
+            document.getElementById("trump-card-info").innerHTML = "No trump"
+        } else {
+            document.getElementById("trump-card").innerHTML = this.HTMLCard(trump_card, false, "trump")
+        }
+    }
+
+    updateChoicePlayer(index, choice) {
+        document.getElementById(`choice-player-info-${index}`).innerHTML = Object.keys(POSSIBILITIES)[choice].replaceAll("_", " ")
+    }
+
+    disableNotAllowedCards(current_trick, hand) {
+        var allowedCards = current_trick.allowedCards(hand)
+        for (const card of hand.cards) {
+            if (!allowedCards.includes(card)) {
+                $(`#hand-${card.rank}-${card.suit}`).addClass("disabled")
+            }
+        }
+    }
+
+    disableNotAllowedOptions(allowed) {
+        $(".option").each(function() {
+            if (!allowed.includes(Number($(this).attr("value")))) {
+                $(this).addClass("disabled")
+            }
+        });
+    }
+}
+
+class Whist {
+    constructor(handle_ui) {
         this.deck = new Deck()
         this.deck.shuffle()
         this.trump = this.deck.cards[0].suit
+        this.handle_ui = handle_ui
+        this.uihandler = new UIHandler()
         this.trump_card = this.deck.cards[0]
         this.hands = [new Hand(TYPE.HUMAN, "You"), 
                         new Hand(TYPE.AI, "Harry"),
@@ -238,28 +444,15 @@ class Whist {
         
         this.time_last_action = performance.now() - TIME_BETWEEN_ACTIONS
         this.ended = false
-        for (var i = 0; i < 4; i++) {
-            document.getElementById("name-player-" + i.toString()).innerHTML = this.hands[i].name
-        }
         this.start()
-        var whist = this
-        $(".option").click(function() {
-            if (whist.allowedPossibilities().includes(Number($(this).attr("value"))) &&
-                whist.turn == 0) {
-                    whist.hands[0].possibility = Number($(this).attr("value"))
-                    document.getElementById(`choice-player-info-${whist.turn}`).innerHTML = Object.keys(POSSIBILITIES)[Number($(this).attr("value"))].replaceAll("_", " ")
-                    whist.updateStartRound()
-                    document.getElementById("choice-menu-1").style.display = "none"
+
+        if (this.handle_ui) {
+            for (var i = 0; i < 4; i++) {
+                this.uihandler.changeName(i, this.hands[i].name)
             }
-        })
-        $(".option-2").click(function() {
-            if (whist.turn == 0) {
-                whist.hands[0].possibility = Number($(this).attr("value"))
-                document.getElementById(`choice-player-info-${whist.turn}`).innerHTML = Object.keys(POSSIBILITIES)[Number($(this).attr("value"))].replaceAll("_", " ")
-                whist.updateStartRound()
-                document.getElementById("choice-menu-2").style.display = "none"
-            }
-        })
+            this.uihandler.setOptionFunction(this)
+            this.uihandler.setOption2Function(this)
+        }
     }
 
     getVariant() {
@@ -333,50 +526,6 @@ class Whist {
         }
     }
 
-    setTurnImages() {
-        for (var i = 0; i < 4; i++) {
-            if (i === this.turn) {
-                $("#turn-player-" + i.toString()).removeClass("not-turn-player")
-                $("#turn-player-" + i.toString()).addClass("turn-player")
-            } else {
-                $("#turn-player-" + i.toString()).addClass("not-turn-player")
-                if ($("#turn-player-" + i.toString()).attr("class").includes("turn-player")) {
-                    $("#turn-player-" + i.toString()).removeClass("turn-player")
-                }
-            }
-
-            if (i === (this.start_turn + 3) % 4) {
-                $("#dealer-player-" + i.toString()).removeClass("not-dealer-player")
-                $("#dealer-player-" + i.toString()).addClass("dealer-player")
-            } else {
-                $("#dealer-player-" + i.toString()).addClass("not-dealer-player")
-                if ($("#dealer-player-" + i.toString()).attr("class").includes("dealer-player")) {
-                    $("#dealer-player-" + i.toString()).removeClass("dealer-player")
-                }
-            }
-        }
-        
-    }
-
-    showHand(hand) {
-        var html_element = document.getElementById("hand-player")
-        html_element.innerHTML = ""
-        for (const card of hand.cards) {
-            html_element.innerHTML += HTMLCard(card, true, "hand")
-        }
-        var whist = this
-        $(".clickable-card").click(function() {
-            var classList = $(this).attr("class")
-            var classArr = classList.split(/\s+/)
-            var suit = SUITS.findIndex(findExact(classArr[2]))
-            var rank = Number(classArr[3].split("-")[1])
-            for (const card of whist.hands[0].cards) {
-                if (card.suit === suit && card.rank === rank) {
-                    whist.humanPlayCard(card)
-                }
-            }
-        })
-    }
 
     start() {
         this.dealer.retrieveAll()
@@ -386,14 +535,8 @@ class Whist {
         this.current_trick.clearCards()
         this.current_trick = new Trick(this.trump)
         this.previous_trick = new Trick(this.trump)
-        this.setHTMLPreviousTrick()
         for (const hand of this.hands) {
             hand.reset()
-        }
-
-        for (var i = 0; i < 4; i++) {
-            document.getElementById(`score-player-now-${i}`).innerHTML = 0
-            document.getElementById(`choice-player-info-${i}`).innerHTML = ""
         }
 
         this.deck.shuffle()
@@ -402,18 +545,15 @@ class Whist {
         this.trump = this.deck.cards[0].suit
         this.trump_card = this.deck.cards[0]
         this.ended = false
-        this.removeAnimations()
         this.time_last_action = performance.now() - TIME_BETWEEN_ACTIONS
-        document.getElementById("trump-card").innerHTML = HTMLCard(this.trump_card, false, "trump")
         this.dealer.deal()
         for (const hand of this.hands) {
             hand.sortCards()
         }
-        this.setTurnImages()
-        this.showHand(this.hands[0])
-        $(".option").each(function() {
-            $(this).removeClass("disabled")
-        });
+
+        if (this.handle_ui) {
+            this.uihandler.atStart(this)
+        }
         this.trullDetect()
     }
 
@@ -421,11 +561,8 @@ class Whist {
         this.doEndTrick()
         if (this.hands[this.turn].type === TYPE.HUMAN &&
           this.current_trick.allowedCards(this.hands[this.turn]).find(findExact(card)) && !this.start_round) {
-              $(`#hand-${card.rank}-${card.suit}`).addClass("animation-card")
-              $(`#hand-${card.rank}-${card.suit} span`).addClass("animation-card-text")
-              $(`#hand-${card.rank}-${card.suit}`).click(function() {})
-            for (const card of this.hands[this.turn].cards) {
-                $(`#hand-${card.rank}-${card.suit}`).removeClass("disabled")
+            if (this.handle_ui) {
+                this.uihandler.handlePlayCardHuman(card, this.hands[this.turn])
             }
             this.playCard(card)
             this.time_last_action = performance.now()
@@ -433,22 +570,15 @@ class Whist {
         }
     }
 
-    removeAnimations() {
-        for (var turn = 0; turn < 4; turn++) {
-            if ($("#card-turn-" + turn.toString()).hasClass("animate")) {
-                $("#card-turn-" + turn.toString()).removeClass("animate")
-            }
-        }
-    }
-
     playCard(card) {
         this.hands[this.turn].removeCard(card)
         this.current_trick.addCard(card, this.hands[this.turn])
-        document.getElementById("card-turn-" + this.turn.toString()).innerHTML = HTMLCard(card, false, "trick")
-        $("#card-turn-" + this.turn.toString()).addClass("animate")
+        if (this.handle_ui) {
+            this.uihandler.throwCard(card, this.turn)
+        }
         this.turn = (this.turn + 1) % 4
-        if (!this.checkEndTrick()) {
-            this.setTurnImages()
+        if (!this.checkEndTrick() && this.handle_ui) {
+            this.uihandler.setTurnImages(this.turn, this.start_turn)
         }
     }
 
@@ -458,45 +588,34 @@ class Whist {
 
     doEndTrick() {
         if (this.checkEndTrick()) {
-            var winner = this.current_trick.decideWinner(![POSSIBILITIES.Misery, POSSIBILITIES.Open_Misery].includes(this.getVariant()))
+            var winner = this.current_trick.decideWinner()
             winner.score_game += 1
-            for (var i = 0; i < 4; i++) {
-                document.getElementById(`score-player-now-${i}`).innerHTML = this.hands[i].score_game
-            }
+            
             this.turn = this.hands.findIndex(findExact(winner))
             this.current_trick.returnToDeck(this.deck)
             this.previous_trick = this.current_trick
-            this.setHTMLPreviousTrick()
             this.current_trick = new Trick(this.trump)
-            for(var turn = 0; turn < 4; turn++) {
-                document.getElementById("card-turn-" + turn.toString()).innerHTML = ""
+            if (this.handle_ui) {
+                this.uihandler.endTrick(this.hands, this.previous_trick)
             }
+            
             if (this.hands[0].cards.length === 0) {
                 this.end()
             }
-            this.setTurnImages()
-            this.removeAnimations()
+            if (this.handle_ui) {
+                this.uihandler.setTurnImages(this.turn, this.start_turn)
+                this.uihandler.removeAnimationsCards()
+            }
         }
     }
 
     end() {
         this.ended = true
         this.calculateScoreEnd()
-        for (var i = 0; i < 4; i++) {
-            document.getElementById(`score-player-overall-${i}`).innerHTML = this.hands[i].overall_score
+        if (this.handle_ui) {
+            this.uihandler.updateOverallScore(this.hands)
         }
         this.start()
-    }
-
-    setHTMLPreviousTrick() {
-        for(var i = 0; i < 4; i++) {
-            if (this.previous_trick.cards_hands[i]) {
-                document.getElementById(`trick-card-${i}`).innerHTML = HTMLCard(this.previous_trick.cards_hands[i][0], false, "previous")
-            } else {
-                document.getElementById(`trick-card-${i}`).innerHTML = ""
-
-            }
-        }
     }
 
     updateStartRound() {
@@ -523,8 +642,8 @@ class Whist {
                             break
                         }
                     }
-                    if (this.turn === 0) {
-                        document.getElementById("choice-menu-2").style.display = "block"
+                    if (this.turn === 0 && this.handle_ui) {
+                        this.uihandler.showAskAgainChoiceMenu()
                     }
                 }
             }
@@ -535,23 +654,23 @@ class Whist {
                 this.start()
             } else {
                 if (variant === POSSIBILITIES.Misery || variant == POSSIBILITIES.Open_Misery) {
-                    document.getElementById("trump-card").innerHTML = ""
-                    document.getElementById("trump-card-info").innerHTML = "No trump"
+                    this.trump_card = null
+                    this.trump = null
                 } else if (POSSIBILITIES.Abondance_Spades  <= variant && variant <= POSSIBILITIES.Abondance_Hearts) {
                     this.trump = variant - POSSIBILITIES.Abondance_Spades
                     this.trump_card = new Card(1, this.trump)
-                    document.getElementById("trump-card").innerHTML = HTMLCard(this.trump_card, false, "trump")
                 } else if (POSSIBILITIES.Grand_Slam_Spades  <= variant && variant <= POSSIBILITIES.Grand_Slam_Hearts) {
                     this.trump = variant - POSSIBILITIES.Grand_Slam_Spades
                     this.trump_card = new Card(1, this.trump)
-                    document.getElementById("trump-card").innerHTML = HTMLCard(this.trump_card, false, "trump")
                 }
                 for (var i = 0; i < 4; i++) {
                     var hand = this.hands[i]
                     if (hand.possibility < variant && (hand.possibility !== POSSIBILITIES.Ask || 
                         variant !== POSSIBILITIES.Follow)) {
                             hand.possibility = POSSIBILITIES.Pass
-                            document.getElementById(`choice-player-info-${i}`).innerHTML = Object.keys(POSSIBILITIES)[POSSIBILITIES.Pass].replaceAll("_", " ")
+                            if (this.handle_ui) {
+                                this.uihandler.updateChoicePlayer(i, hand.possibility)
+                            }
                     } else {
                         hand.possibility = variant
                     }
@@ -564,8 +683,15 @@ class Whist {
                     } 
                 }
             }
+            if (this.handle_ui) {
+                this.uihandler.updateTrumpCard(this.trump_card)
+            }
+            this.current_trick = new Trick(this.trump)
+            this.previous_trick = new Trick(this.trump)
         }
-        this.setTurnImages()
+        if (this.handle_ui) {
+            this.uihandler.setTurnImages(this.turn, this.start_turn)
+        }
     }
 
     trullDetect() {
@@ -579,7 +705,9 @@ class Whist {
             }
             if (aces >= 3) {
                 hand.possibility = POSSIBILITIES.Trull
-                document.getElementById(`choice-player-info-${j}`).innerHTML = Object.keys(POSSIBILITIES)[POSSIBILITIES.Trull].replaceAll("_", " ")
+                if (this.handle_ui) {
+                    this.uihandler.updateChoicePlayer(j, hand.possibility)
+                }
                 var highest_other_val = 0
                 var highest_other_rank = 0
                 var highest_other_suit = 0
@@ -597,30 +725,25 @@ class Whist {
                                 partner_index = i
                                 this.trump_card = card
                                 this.trump = card.suit
-                                document.getElementById("trump-card").innerHTML = HTMLCard(this.trump_card, false, "trump")
+                                if (this.handle_ui) {
+                                    this.uihandler.updateTrumpCard(this.trump_card)
+                                }
                             }
                         }
                     }
                 }
                 partner.possibility = POSSIBILITIES.Trull
-                document.getElementById(`choice-player-info-${partner_index}`).innerHTML = Object.keys(POSSIBILITIES)[POSSIBILITIES.Trull].replaceAll("_", " ")
+                if (this.handle_ui) {
+                    this.uihandler.updateChoicePlayer(partner_index, partner.possibility)
+                }
                 this.current_trick.extra_rank_requirement = highest_other_rank
                 this.current_trick.extra_suit_requirement = highest_other_suit
                 this.turn = (partner_index + 3) % 4
                 this.start_round_chosen = 3
                 this.updateStartRound()
-                if (this.turn === 0) {
-                    this.disableNotAllowed()
+                if (this.turn === 0 && this.handle_ui) {
+                    this.uihandler.disableNotAllowedCards(this.current_trick, this.hands[this.turn])
                 }
-            }
-        }
-    }
-
-    disableNotAllowed() {
-        var allowedCards = this.current_trick.allowedCards(this.hands[this.turn])
-        for (const card of this.hands[this.turn].cards) {
-            if (!allowedCards.includes(card)) {
-                $(`#hand-${card.rank}-${card.suit}`).addClass("disabled")
             }
         }
     }
@@ -630,18 +753,20 @@ class Whist {
             if (this.hands[this.turn].type === TYPE.AI && 
                 performance.now() - this.time_last_action > TIME_BETWEEN_ACTIONS) {
                     this.hands[this.turn].possibility = this.ais[this.turn].decide_possibility(this) 
-                    document.getElementById(`choice-player-info-${this.turn}`).innerHTML = Object.keys(POSSIBILITIES)[this.hands[this.turn].possibility].replaceAll("_", " ")
+                    if (this.handle_ui) {
+                        this.uihandler.updateChoicePlayer(this.turn, this.hands[this.turn].possibility)
+                    }
                     this.time_last_action = performance.now()
                     this.updateStartRound()
                 }
             else if (this.turn === 0 && this.hands[this.turn].possibility === null) {
-                document.getElementById("choice-menu-1").style.display = "block"
-                var allowed = this.allowedPossibilities()
-                $(".option").each(function() {
-                    if (!allowed.includes(Number($(this).attr("value")))) {
-                        $(this).addClass("disabled")
-                    }
-                });
+                if(this.handle_ui) {
+                    this.uihandler.showMainOptionMenu()
+                }
+                if(this.handle_ui) {
+                    var allowed = this.allowedPossibilities()
+                    this.uihandler.disableNotAllowedOptions(allowed)
+                }
             }
         } else if (!this.ended) {
             if (this.hands[this.turn].type === TYPE.AI && 
@@ -650,8 +775,8 @@ class Whist {
                 this.time_last_action = performance.now()
                 var card = this.ais[this.turn].decide(this.current_trick)
                 this.playCard(card)  
-                if (this.turn === 0 && !this.checkEndTrick()) {
-                    this.disableNotAllowed()
+                if (this.turn === 0 && !this.checkEndTrick() && this.handle_ui) {
+                    this.uihandler.disableNotAllowedCards(this.current_trick, this.hands[this.turn])
                 }  
             }
     
@@ -664,31 +789,6 @@ class Whist {
     }
 }
 
-
-
-function HTMLCard(card, clickable, before_id) {
-    if (clickable) {
-        return `
-        <a class="clickable-card card ${SUITS[card.suit]} rank-${card.rank}" id="${before_id}-${card.rank}-${card.suit}">
-            <span class="rank-symbol-1"></span>
-            <span class="suit-symbol-1"></span>
-            <span class="suit-symbol-2"></span>
-            <span class="suit-symbol-3"></span>
-            <span class="rank-symbol-2"></span>
-        </a>`
-    } else {
-        return `
-        <div class="card ${SUITS[card.suit]} rank-${card.rank}" id="${before_id}-${card.rank}-${card.suit}">
-            <span class="rank-symbol-1"></span>
-            <span class="suit-symbol-1"></span>
-            <span class="suit-symbol-2"></span>
-            <span class="suit-symbol-3"></span>
-            <span class="rank-symbol-2"></span>
-        </div>`
-    }
-    
-}
-
 function findExact(value) {
     function findFun(val) {
         return val === value
@@ -697,7 +797,7 @@ function findExact(value) {
 }
 
 function main() {
-    var whist = new Whist()
+    var whist = new Whist(true)
     setInterval(function() {whist.update()}, 500)
     
 }
