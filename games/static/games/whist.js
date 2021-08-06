@@ -151,15 +151,24 @@ class Trick {
         }
     }
 
+    standardRequirement(card) {
+        return this.cards_hands.length === 0 || this.cards_hands[0][0].suit === card.suit
+    }
+
+    suitExtraRequirement(card) {
+        return this.extra_suit_requirement === null || card.suit === this.extra_suit_requirement
+    }
+
+    rankExtraRequirement(card) {
+        var discardRequirement = this.cards_hands.length > 0 || this.extra_rank_requirement === null
+        return discardRequirement || card.rank == this.extra_rank_requirement
+    }
+
     allowedCards(hand) {
         var suit_cards = []
         for (const card of hand.cards) {
-            if (this.cards_hands.length === 0 || this.cards_hands[0][0].suit === card.suit) {
-                if (this.extra_suit_requirement === null || card.suit === this.extra_suit_requirement) {
-                    if (this.cards_hands.length > 0 || this.extra_rank_requirement === null || card.rank == this.extra_rank_requirement) {
-                        suit_cards.push(card)
-                    }
-                }
+            if (this.standardRequirement(card) && this.suitExtraRequirement(card) && this.rankExtraRequirement(card)) {
+                suit_cards.push(card)
             }
         }
 
@@ -176,7 +185,8 @@ class Trick {
 
     scoreCard(card) {
         if (this.trump !== null) {
-            return card.getValue() * ((card.suit === this.trump) * 15 + (card.suit === this.cards_hands[0][0].suit))
+            var suitValue = (card.suit === this.trump) * 14 + (card.suit === this.cards_hands[0][0].suit)
+            return card.getValue() * suitValue
         } else {
             return card.getValue() * (card.suit === this.cards_hands[0][0].suit)
 
@@ -219,43 +229,38 @@ class AIDecider {
 
 
 class UIHandler {
-    constructor() {
-
-    }
-
     HTMLCard(card, clickable, before_id) {
+        var clickable_class = ""
         if (clickable) {
-            return `
-            <a class="clickable-card card ${SUITS[card.suit]} rank-${card.rank}" id="${before_id}-${card.rank}-${card.suit}">
-                <span class="rank-symbol-1"></span>
-                <span class="suit-symbol-1"></span>
-                <span class="suit-symbol-2"></span>
-                <span class="suit-symbol-3"></span>
-                <span class="rank-symbol-2"></span>
-            </a>`
-        } else {
-            return `
-            <div class="card ${SUITS[card.suit]} rank-${card.rank}" id="${before_id}-${card.rank}-${card.suit}">
-                <span class="rank-symbol-1"></span>
-                <span class="suit-symbol-1"></span>
-                <span class="suit-symbol-2"></span>
-                <span class="suit-symbol-3"></span>
-                <span class="rank-symbol-2"></span>
-            </div>`
+            clickable_class = "clickable-card"
         }
+        return `<a class="${clickable_class} card ${SUITS[card.suit]} 
+                rank-${card.rank}" id="${before_id}-${card.rank}-${card.suit}">
+                    <span class="rank-symbol-1"></span>
+                    <span class="suit-symbol-1"></span>
+                    <span class="suit-symbol-2"></span>
+                    <span class="suit-symbol-3"></span>
+                    <span class="rank-symbol-2"></span>
+                </a>`
     }
 
     changeName(index, name) {
-        document.getElementById("name-player-" + index.toString()).innerHTML = name
+        $("#name-player-" + index.toString()).html(name)
+    }
+
+    getPossibility(choice) {
+        return Object.keys(POSSIBILITIES)[choice].replaceAll("_", " ")
     }
 
     setOptionFunction(whist) {
+        var ui = this
         $(".option").click(function() {
-            if (whist.allowedPossibilities().includes(Number($(this).attr("value"))) && whist.turn == 0) {
-                whist.hands[0].possibility = Number($(this).attr("value"))
-                document.getElementById(`choice-player-info-${whist.turn}`).innerHTML = Object.keys(POSSIBILITIES)[Number($(this).attr("value"))].replaceAll("_", " ")
+            var possibility = Number($(this).attr("value"))
+            if (whist.allowedPossibilities().includes(possibility) && whist.turn == 0) {
+                whist.hands[0].possibility = possibility
+                $(`#choice-player-info-${whist.turn}`).html(ui.getPossibility(possibility))
                 whist.updateStartRound()
-                document.getElementById("choice-menu-1").style.display = "none"
+                $("#choice-menu-1").css("display", "none")
             }
         })
     }
@@ -267,12 +272,14 @@ class UIHandler {
     }
 
     setOption2Function(whist) {
+        var ui = this
         $(".option-2").click(function() {
             if (whist.turn == 0) {
-                whist.hands[0].possibility = Number($(this).attr("value"))
-                document.getElementById(`choice-player-info-${whist.turn}`).innerHTML = Object.keys(POSSIBILITIES)[Number($(this).attr("value"))].replaceAll("_", " ")
+                var possibility = Number($(this).attr("value"))
+                whist.hands[0].possibility = possibility
+                $(`#choice-player-info-${whist.turn}`).html(ui.getPossibility(possibility))
                 whist.updateStartRound()
-                document.getElementById("choice-menu-2").style.display = "none"
+                $("#choice-menu-2").css("display", "none")
             }
         })
     }
@@ -302,11 +309,12 @@ class UIHandler {
     }
 
     showHand(hand, whist) {
-        var html_element = document.getElementById("hand-player")
-        html_element.innerHTML = ""
+        var message = ""
         for (const card of hand.cards) {
-            html_element.innerHTML += this.HTMLCard(card, true, "hand")
+            message += this.HTMLCard(card, true, "hand")
         }
+        $("#hand-player").html(message)
+
         $(".clickable-card").click(function() {
             var classList = $(this).attr("class")
             var classArr = classList.split(/\s+/)
@@ -324,12 +332,12 @@ class UIHandler {
         this.setHTMLPreviousTrick(whist.previous_trick)
         this.removeAnimationsCards()
         for (var i = 0; i < 4; i++) {
-            document.getElementById(`score-player-now-${i}`).innerHTML = 0
-            document.getElementById(`choice-player-info-${i}`).innerHTML = ""
+            $(`#score-player-now-${i}`).html(0)
+            $(`#choice-player-info-${i}`).html("")
         }
-        document.getElementById("trump-card").innerHTML = this.HTMLCard(whist.trump_card, false, "trump")
+        $("#trump-card").html(this.HTMLCard(whist.trump_card, false, "trump"))
         this.setTurnImages(whist.turn, whist.start_turn)
-        this.showHand(whist.hands[0], whist)
+        this.showHand(whist.hands[whist.player_index], whist)
         this.removeDisabledOption()
     }
 
@@ -351,55 +359,55 @@ class UIHandler {
     }
 
     throwCard(card, turn) {
-        document.getElementById("card-turn-" + turn.toString()).innerHTML = this.HTMLCard(card, false, "trick")
+        $("#card-turn-" + turn.toString()).html(this.HTMLCard(card, false, "trick"))
         $("#card-turn-" + turn.toString()).addClass("animate")
     }
 
     setHTMLPreviousTrick(previous_trick) {
         for(var i = 0; i < 4; i++) {
             if (previous_trick.cards_hands[i]) {
-                document.getElementById(`trick-card-${i}`).innerHTML = this.HTMLCard(previous_trick.cards_hands[i][0], false, "previous")
+                $(`#trick-card-${i}`).html(this.HTMLCard(previous_trick.cards_hands[i][0], false, "previous"))
             } else {
-                document.getElementById(`trick-card-${i}`).innerHTML = ""
+                $(`#trick-card-${i}`).html("")
             }
         }
     }
 
     endTrick(hands, previous_trick) {
         for (var i = 0; i < 4; i++) {
-            document.getElementById(`score-player-now-${i}`).innerHTML = hands[i].score_game
+            $(`#score-player-now-${i}`).html(hands[i].score_game)
         }
         for(var turn = 0; turn < 4; turn++) {
-            document.getElementById("card-turn-" + turn.toString()).innerHTML = ""
+            $("#card-turn-" + turn.toString()).html("")
         }
         this.setHTMLPreviousTrick(previous_trick)
     }
 
     updateOverallScore(hands) {
         for (var i = 0; i < 4; i++) {
-            document.getElementById(`score-player-overall-${i}`).innerHTML = hands[i].overall_score
+            $(`#score-player-overall-${i}`).html(hands[i].overall_score)
         }
     }
 
     showAskAgainChoiceMenu() {
-        document.getElementById("choice-menu-2").style.display = "block"
+        $("#choice-menu-2").css("display", "block")
     }
 
     showMainOptionMenu() {
-        document.getElementById("choice-menu-1").style.display = "block"
+        $("#choice-menu-1").css("display", "block")
     }
 
     updateTrumpCard(trump_card) {
         if (trump_card === null) {
-            document.getElementById("trump-card").innerHTML = ""
-            document.getElementById("trump-card-info").innerHTML = "No trump"
+            $("#trump-card").html("")
+            $("#trump-card-info").html("No trump")
         } else {
-            document.getElementById("trump-card").innerHTML = this.HTMLCard(trump_card, false, "trump")
+            $("#trump-card").html(this.HTMLCard(trump_card, false, "trump"))
         }
     }
 
     updateChoicePlayer(index, choice) {
-        document.getElementById(`choice-player-info-${index}`).innerHTML = Object.keys(POSSIBILITIES)[choice].replaceAll("_", " ")
+        $(`#choice-player-info-${index}`).html(this.getPossibility(choice))
     }
 
     disableNotAllowedCards(current_trick, hand) {
@@ -421,29 +429,25 @@ class UIHandler {
 }
 
 class Whist {
-    constructor(handle_ui) {
+    constructor(handle_ui, hands, ais, player_index) {
         this.deck = new Deck()
-        this.deck.shuffle()
-        this.trump = this.deck.cards[0].suit
+        this.trump = null
         this.handle_ui = handle_ui
         this.uihandler = new UIHandler()
-        this.trump_card = this.deck.cards[0]
-        this.hands = [new Hand(TYPE.HUMAN, "You"), 
-                        new Hand(TYPE.AI, "Harry"),
-                        new Hand(TYPE.AI, "Ron"), 
-                        new Hand(TYPE.AI, "Hermione")]
-        this.ais = [null, new AIDecider(this.hands[1]), new AIDecider(this.hands[2]), new AIDecider(this.hands[3])]
+        this.trump_card = null
+        this.hands = hands
+        this.ais = ais
         this.dealer = new Dealer(this.deck, this.hands, 13)
         this.turn = 0
         this.start_turn = -1
         this.start_round = true
         this.start_round_chosen = 0
-        this.current_trick = new Trick(this.trump)
-        this.previous_trick = new Trick(this.trump)
+        this.current_trick = null
+        this.previous_trick = null
         this.asked_again = false
+        this.player_index = player_index
         
         this.time_last_action = performance.now() - TIME_BETWEEN_ACTIONS
-        this.ended = false
         this.start()
 
         if (this.handle_ui) {
@@ -453,6 +457,37 @@ class Whist {
             this.uihandler.setOptionFunction(this)
             this.uihandler.setOption2Function(this)
         }
+    }
+
+    start() {
+        this.dealer.retrieveAll()
+        this.start_turn = (this.start_turn + 1) % 4
+        this.turn = this.start_turn
+        this.asked_again = false
+        if (this.current_trick !== null) {
+            this.current_trick.clearCards()
+        }
+        this.current_trick = new Trick(this.trump)
+        this.previous_trick = new Trick(this.trump)
+        for (const hand of this.hands) {
+            hand.reset()
+        }
+
+        this.deck.shuffle()
+        this.start_round = true
+        this.start_round_chosen = 0
+        this.trump = this.deck.cards[0].suit
+        this.trump_card = this.deck.cards[0]
+        this.time_last_action = performance.now() - TIME_BETWEEN_ACTIONS
+        this.dealer.deal()
+        for (const hand of this.hands) {
+            hand.sortCards()
+        }
+
+        if (this.handle_ui) {
+            this.uihandler.atStart(this)
+        }
+        this.trullDetect()
     }
 
     getVariant() {
@@ -526,47 +561,15 @@ class Whist {
         }
     }
 
-
-    start() {
-        this.dealer.retrieveAll()
-        this.start_turn = (this.start_turn + 1) % 4
-        this.turn = this.start_turn
-        this.asked_again = false
-        this.current_trick.clearCards()
-        this.current_trick = new Trick(this.trump)
-        this.previous_trick = new Trick(this.trump)
-        for (const hand of this.hands) {
-            hand.reset()
-        }
-
-        this.deck.shuffle()
-        this.start_round = true
-        this.start_round_chosen = 0
-        this.trump = this.deck.cards[0].suit
-        this.trump_card = this.deck.cards[0]
-        this.ended = false
-        this.time_last_action = performance.now() - TIME_BETWEEN_ACTIONS
-        this.dealer.deal()
-        for (const hand of this.hands) {
-            hand.sortCards()
-        }
-
-        if (this.handle_ui) {
-            this.uihandler.atStart(this)
-        }
-        this.trullDetect()
-    }
-
     humanPlayCard(card) {
         this.doEndTrick()
-        if (this.hands[this.turn].type === TYPE.HUMAN &&
-          this.current_trick.allowedCards(this.hands[this.turn]).find(findExact(card)) && !this.start_round) {
+        if (this.turn === this.player_index && !this.start_round &&
+                this.current_trick.allowedCards(this.hands[this.turn]).find(findExact(card))) {
             if (this.handle_ui) {
                 this.uihandler.handlePlayCardHuman(card, this.hands[this.turn])
             }
             this.playCard(card)
             this.time_last_action = performance.now()
-            
         }
     }
 
@@ -610,7 +613,6 @@ class Whist {
     }
 
     end() {
-        this.ended = true
         this.calculateScoreEnd()
         if (this.handle_ui) {
             this.uihandler.updateOverallScore(this.hands)
@@ -642,12 +644,13 @@ class Whist {
                             break
                         }
                     }
-                    if (this.turn === 0 && this.handle_ui) {
+                    if (this.hands[this.turn].type === TYPE.HUMAN && this.handle_ui) {
                         this.uihandler.showAskAgainChoiceMenu()
                     }
                 }
             }
-        } else if (!this.start_round) {
+        } 
+        if (!this.start_round) {
             var variant = this.getVariant()
             this.turn = this.start_turn
             if (variant == POSSIBILITIES.Pass) {
@@ -663,6 +666,10 @@ class Whist {
                     this.trump = variant - POSSIBILITIES.Grand_Slam_Spades
                     this.trump_card = new Card(1, this.trump)
                 }
+
+                this.current_trick = new Trick(this.trump)
+                this.previous_trick = new Trick(this.trump)
+
                 for (var i = 0; i < 4; i++) {
                     var hand = this.hands[i]
                     if (hand.possibility < variant && (hand.possibility !== POSSIBILITIES.Ask || 
@@ -674,20 +681,24 @@ class Whist {
                     } else {
                         hand.possibility = variant
                     }
-                    if ((POSSIBILITIES.Abondance_Spades <= hand.possibility && POSSIBILITIES.Abondance_Hearts >= hand.possibility)) {
+                    if ((POSSIBILITIES.Abondance_Spades <= hand.possibility && 
+                        POSSIBILITIES.Abondance_Hearts >= hand.possibility)) {
                         this.turn = i
                         this.current_trick.extra_suit_requirement = hand.possibility - POSSIBILITIES.Abondance_Spades
-                    } else if ((POSSIBILITIES.Grand_Slam_Spades <= hand.possibility && POSSIBILITIES.Grand_Slam_Hearts >= hand.possibility)) {
+                    } else if ((POSSIBILITIES.Grand_Slam_Spades <= hand.possibility && 
+                                POSSIBILITIES.Grand_Slam_Hearts >= hand.possibility)) {
                         this.turn = i
                         this.current_trick.extra_suit_requirement = hand.possibility - POSSIBILITIES.Grand_Slam_Spades
                     } 
                 }
             }
+
             if (this.handle_ui) {
                 this.uihandler.updateTrumpCard(this.trump_card)
+                if (this.turn === this.player_index) {
+                    this.uihandler.disableNotAllowedCards(this.current_trick, this.hands[this.player_index])
+                }
             }
-            this.current_trick = new Trick(this.trump)
-            this.previous_trick = new Trick(this.trump)
         }
         if (this.handle_ui) {
             this.uihandler.setTurnImages(this.turn, this.start_turn)
@@ -725,15 +736,13 @@ class Whist {
                                 partner_index = i
                                 this.trump_card = card
                                 this.trump = card.suit
-                                if (this.handle_ui) {
-                                    this.uihandler.updateTrumpCard(this.trump_card)
-                                }
                             }
                         }
                     }
                 }
                 partner.possibility = POSSIBILITIES.Trull
                 if (this.handle_ui) {
+                    this.uihandler.updateTrumpCard(this.trump_card)
                     this.uihandler.updateChoicePlayer(partner_index, partner.possibility)
                 }
                 this.current_trick.extra_rank_requirement = highest_other_rank
@@ -741,7 +750,7 @@ class Whist {
                 this.turn = (partner_index + 3) % 4
                 this.start_round_chosen = 3
                 this.updateStartRound()
-                if (this.turn === 0 && this.handle_ui) {
+                if (this.turn === this.player_index && this.handle_ui) {
                     this.uihandler.disableNotAllowedCards(this.current_trick, this.hands[this.turn])
                 }
             }
@@ -759,7 +768,7 @@ class Whist {
                     this.time_last_action = performance.now()
                     this.updateStartRound()
                 }
-            else if (this.turn === 0 && this.hands[this.turn].possibility === null) {
+            else if (this.turn === this.player_index && this.hands[this.turn].possibility === null) {
                 if(this.handle_ui) {
                     this.uihandler.showMainOptionMenu()
                 }
@@ -768,14 +777,14 @@ class Whist {
                     this.uihandler.disableNotAllowedOptions(allowed)
                 }
             }
-        } else if (!this.ended) {
+        } else {
             if (this.hands[this.turn].type === TYPE.AI && 
                 performance.now() - this.time_last_action > TIME_BETWEEN_ACTIONS &&
                 this.current_trick.cards_hands.length < 4) {
                 this.time_last_action = performance.now()
                 var card = this.ais[this.turn].decide(this.current_trick)
                 this.playCard(card)  
-                if (this.turn === 0 && !this.checkEndTrick() && this.handle_ui) {
+                if (this.turn === this.player_index  && !this.checkEndTrick() && this.handle_ui) {
                     this.uihandler.disableNotAllowedCards(this.current_trick, this.hands[this.turn])
                 }  
             }
@@ -797,9 +806,12 @@ function findExact(value) {
 }
 
 function main() {
-    var whist = new Whist(true)
-    setInterval(function() {whist.update()}, 500)
+    var hands = [new Hand(TYPE.HUMAN, "You"), new Hand(TYPE.AI, "Harry"), new Hand(TYPE.AI, "Ron"), 
+                 new Hand(TYPE.AI, "Hermione")]
+    var ais = [null, new AIDecider(hands[1]), new AIDecider(hands[2]), new AIDecider(hands[3])]
+    var whist = new Whist(true, hands, ais, 0)
     
+    setInterval(function() {whist.update()}, TIME_BETWEEN_ACTIONS)
 }
 
 main()
