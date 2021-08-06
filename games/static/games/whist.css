@@ -7,13 +7,11 @@
     overflow: hidden;
 }
 
-.dropdown-menu {
-    background: rgb(43, 43, 43);
+.ai-and-choices {
+    height: 480px;
+    position: relative;
 }
 
-.dropdown-menu .option {
-    padding-left: 15px;
-}
 
 .card {
     height: 100px;
@@ -29,56 +27,18 @@
     cursor: default;
 }
 
-#trump-card-all, #previous-trick-all {
-    position: absolute;
-    text-align: center;
-    padding: 0 10px;
-    padding-top: 5px;
-    border-radius: 10px;
+.animation-card {
+    transition: all 0.3s linear;
+    height: 0px;
+    width: 0px;
+    border: 0px;
+    margin: 0 0px;
+    visibility: hidden;
 }
 
-#previous-trick-all {
-    bottom: 20px;
-    right: 20px;
-    height: 100px;
-    width: 150px;
+.animation-card-text {
+    visibility: hidden;
 }
-
-#trump-card-all {
-    bottom: 20px;
-    left: 20px;
-    height: 100px;
-}
-
-#trump-card {
-    transform: scale(0.6, 0.6);
-    margin-bottom: -10px;
-}
-
-.trick-card {
-    transform: scale(0.6, 0.6);
-    margin: 0 -30px;
-    margin-bottom: -10px;
-}
-
-#trick-cards {
-    display: flex;
-    justify-content: center;
-}
-
-#trump-card-info, #previous-trick-info {
-    color: white;
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: -10px;
-}
-
-.choice-menu {
-    position: absolute;
-    top: 280px;
-    left: 620px;
-}
-
 
 .clickable-card {
     transition: 0.4s;
@@ -89,50 +49,11 @@
 .clickable-card:hover {
     margin-top: -20px;
 }
+
 .clickable-card.disabled:hover {
     margin-top: 0 !important;
 }
 
-.hand-player {
-    display: flex;
-    justify-content: center;
-}
-
-.ai-and-choices {
-    height: 480px;
-    position: relative;
-}
-
-.animation-card {
-    transition: all 0.3s linear;
-    height: 0px;
-    width: 0px;
-    border: 0px;
-    margin: 0 0px;
-    visibility: hidden;
-}
-
-.option, .option-2, .option-dropdown {
-    background: none;
-    color: white;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    margin: 2px 0px;
-}
-
-.option.disabled, .option-2.disabled {
-    color: grey;
-    cursor: default;
-}
-
-.option:hover, .option-2:hover {
-    color: grey;
-}
-
-.animation-card-text {
-    visibility: hidden;
-}
 
 .card-turn {
     position: absolute;
@@ -185,6 +106,51 @@
     transform: translate(-50%, -50%) rotate(359deg);
     transition: transform 0.5s linear;
 }
+
+#trump-card-all, #previous-trick-all {
+    position: absolute;
+    text-align: center;
+    padding: 0 10px;
+    padding-top: 5px;
+    border-radius: 10px;
+}
+
+#trump-card-all {
+    bottom: 20px;
+    left: 20px;
+    height: 100px;
+}
+
+#trump-card {
+    transform: scale(0.6, 0.6);
+    margin-bottom: -10px;
+}
+
+#previous-trick-all {
+    bottom: 20px;
+    right: 20px;
+    height: 100px;
+    width: 150px;
+}
+
+.trick-card {
+    transform: scale(0.6, 0.6);
+    margin: 0 -30px;
+    margin-bottom: -10px;
+}
+
+#trick-cards {
+    display: flex;
+    justify-content: center;
+}
+
+#trump-card-info, #previous-trick-info {
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: -10px;
+}
+
 
 .player-info {
     position: absolute;
@@ -278,6 +244,42 @@
     background-color: rgba(67, 125, 233, 0.644);
 }
 
+.dropdown-menu {
+    background: rgb(43, 43, 43);
+}
+
+.dropdown-menu .option {
+    padding-left: 15px;
+}
+
+.choice-menu {
+    position: absolute;
+    top: 280px;
+    left: 620px;
+}
+
+.option, .option-2, .option-dropdown {
+    background: none;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    margin: 2px 0px;
+}
+
+.option.disabled, .option-2.disabled {
+    color: grey;
+    cursor: default;
+}
+
+.option:hover, .option-2:hover {
+    color: grey;
+}
+
+.hand-player {
+    display: flex;
+    justify-content: center;
+}
 
 .suit-symbol-1, .suit-symbol-3, 
 .rank-symbol-1, .rank-symbol-2 {
