@@ -15,12 +15,11 @@ const POSSIBILITIES = {
     Abondance_Clubs: 5, 
     Abondance_Hearts: 6, 
     Misery: 7,
-    Open_Misery: 8, 
-    Grand_Slam_Spades: 9, 
-    Grand_Slam_Diamonds: 10, 
-    Grand_Slam_Clubs: 11, 
-    Grand_Slam_Hearts: 12, 
-    Trull: 13
+    Grand_Slam_Spades: 8, 
+    Grand_Slam_Diamonds: 9, 
+    Grand_Slam_Clubs: 10, 
+    Grand_Slam_Hearts: 11, 
+    Trull: 12
 }
 
 class Card {
@@ -184,11 +183,16 @@ class Trick {
     }
 
     scoreCard(card) {
+        var suitVal1 = 1
+        if (this.cards_hands.length > 0) {
+            suitVal1 = (card.suit === this.cards_hands[0][0].suit)
+        }
+
         if (this.trump !== null) {
-            var suitValue = (card.suit === this.trump) * 14 + (card.suit === this.cards_hands[0][0].suit)
+            var suitValue = (card.suit === this.trump) * 14 + suitVal1
             return card.getValue() * suitValue
         } else {
-            return card.getValue() * (card.suit === this.cards_hands[0][0].suit)
+            return card.getValue() * suitVal1
 
         }
     }
@@ -207,19 +211,134 @@ class Trick {
     }
 }
 
-class AIDecider {
-    constructor(hand) {
+
+class RandomDecider {
+    constructor (hand) {
         this.hand = hand
     }
 
-    decide(trick) {
-        var cardsAllowed = trick.allowedCards(this.hand)
+    decide(whist) {
+        var cardsAllowed = whist.current_trick.allowedCards(whist.hands[whist.turn])
         var index = Math.floor(Math.random() * cardsAllowed.length)
         return cardsAllowed[index]
     }
 
     decide_possibility(whist) {
-        if (this.hand.possibility !== null) {
+        if (whist.hands[whist.turn].possibility !== null) {
+            return POSSIBILITIES.Pass
+        } else {
+            return POSSIBILITIES.Pass
+        }   
+    }
+}
+
+class RulesDecider {
+    constructor (hand) {
+        this.hand = hand
+    }
+
+    decideAllowedParameters(cardsAllowed, cardsOtherHands, variant, current_trick) {
+        if (variant !== POSSIBILITIES.Misery) {
+            if (current_trick.cards_hands.length === 3) {
+                if (current_trick.decideWinner().possibility === this.hand.possibility) {
+                    return this.playLowestCard(current_trick, cardsAllowed)
+                } else {
+                    var card = this.playLowestWinningCard(current_trick, cardsAllowed)
+                    if (card !== null) {
+                        return card
+                    } else {
+                        return this.playLowestCard(current_trick, cardsAllowed)
+                    }
+                }
+            } else {
+                if (current_trick.decideWinner().possibility === this.hand.possibility) {
+                    return this.playLowestCard(current_trick, cardsAllowed)
+                } else {
+                    var card = this.playLowestWinningCard(current_trick, cardsAllowed)
+                    if (card !== null) {
+                        return card
+                    } else {
+                        return this.playLowestCard(current_trick, cardsAllowed)
+                    }
+                }
+            }
+        } else {
+
+        }
+        return cardsAllowed[index]
+    }
+
+    decide(whist) {
+        var cardsAllowed = whist.current_trick.allowedCards(whist.hands[whist.turn])
+        var cardsOtherHands = []
+        for (const hand of whist.hands) {
+            if (hand !== this.hand) {
+                cardsOtherHands.concat(hand.cards)
+            }
+        }
+        return this.decideAllowedParameters(cardsAllowed, cardsOtherHands, whist.getVariant(), whist.current_trick)
+        
+    }
+
+    getValue(card, current_trick) {
+        return current_trick.scoreCard(card)
+    }
+
+    sortByValue(cards, current_trick) {
+        return cards.sort((card1, card2) => this.getValue(card1, current_trick) - this.getValue(card2, current_trick))
+    }
+
+    playLowestCard(current_trick, cardsAllowed) {
+        return this.sortByValue(cardsAllowed, current_trick)[0]
+    }
+
+    playHighestCard(cardsAllowed, current_trick) {
+        return this.sortByValue(cardsAllowed, current_trick)[cardsAllowed.length - 1]
+    }
+
+    playLowestWinningCard(current_trick, cardsAllowed) {
+        var necessary_value = -1
+        for (const card of whist.current_trick.cards_hands) {
+            var val = this.getValue(card[0], current_trick) 
+            if (val > necessary_value) {
+                necessary_value = val
+            }
+        }
+        var lowest_winning = 1000
+        var lowest_winning_card = null
+        for (const card of cardsAllowed) {
+            var val = this.getValue(card, current_trick)
+            if (val > necessary_value && val < lowest_winning) {
+                lowest_winning = val
+                lowest_winning_card = card
+            }
+        }
+        return lowest_winning_card
+    }
+
+    playHighestLosingCard(current_trick, cardsAllowed) {
+        var necessary_value = -1
+        for (const card of current_trick.cards_hands) {
+            var val = this.getValue(card[0], current_trick) 
+            if (val > necessary_value) {
+                necessary_value = val
+            }
+        }
+
+        var highest_losing = -1
+        var highest_losing_card = null
+        for (const card of cardsAllowed) {
+            var val = this.getValue(card, current_trick)
+            if (val < necessary_value && val > highest_losing) {
+                highest_losing = val
+                highest_losing_card = card
+            }
+        }
+        return highest_losing_card
+    }
+
+    decide_possibility(whist) {
+        if (whist.hands[whist.turn].possibility !== null) {
             return POSSIBILITIES.Pass
         } else {
             return POSSIBILITIES.Pass
@@ -260,6 +379,7 @@ class UIHandler {
                 whist.hands[0].possibility = possibility
                 $(`#choice-player-info-${whist.turn}`).html(ui.getPossibility(possibility))
                 whist.updateStartRound()
+                whist.time_last_action = performance.now()
                 $("#choice-menu-1").css("display", "none")
             }
         })
@@ -279,6 +399,7 @@ class UIHandler {
                 whist.hands[0].possibility = possibility
                 $(`#choice-player-info-${whist.turn}`).html(ui.getPossibility(possibility))
                 whist.updateStartRound()
+                whist.time_last_action = performance.now()
                 $("#choice-menu-2").css("display", "none")
             }
         })
@@ -543,8 +664,6 @@ class Whist {
             score = Math.sign(max_score_hand.score_game - 8.5) * 15
         } else if (max_possibility === POSSIBILITIES.Misery) {
             score = - Math.sign(max_score_hand.score_game - 0.5) * 15
-        } else if (max_possibility === POSSIBILITIES.Open_Misery) {
-            score = - Math.sign(max_score_hand.score_game - 0.5) * 30
         } else if (POSSIBILITIES.Grand_Slam_Spades <= max_possibility && max_possibility <= POSSIBILITIES.Grand_Slam_Hearts) {
             score = Math.sign(max_score_hand.score_game - 12.5) * 48
         } else if (max_possibility === POSSIBILITIES.Trull) {
@@ -555,8 +674,10 @@ class Whist {
         for (const hand of this.hands) {
             if (hand === max_score_hand || (n_winners == 2 && hand.possibility == POSSIBILITIES.Follow)) {
                 hand.overall_score += score
-            } else {
+            } else if (n_winners === 2) {
                 hand.overall_score -= score
+            } else {
+                hand.overall_score -= Math.round(score / 3)
             }
         }
     }
@@ -656,7 +777,7 @@ class Whist {
             if (variant == POSSIBILITIES.Pass) {
                 this.start()
             } else {
-                if (variant === POSSIBILITIES.Misery || variant == POSSIBILITIES.Open_Misery) {
+                if (variant === POSSIBILITIES.Misery) {
                     this.trump_card = null
                     this.trump = null
                 } else if (POSSIBILITIES.Abondance_Spades  <= variant && variant <= POSSIBILITIES.Abondance_Hearts) {
@@ -782,7 +903,7 @@ class Whist {
                 performance.now() - this.time_last_action > TIME_BETWEEN_ACTIONS &&
                 this.current_trick.cards_hands.length < 4) {
                 this.time_last_action = performance.now()
-                var card = this.ais[this.turn].decide(this.current_trick)
+                var card = this.ais[this.turn].decide(this)
                 this.playCard(card)  
                 if (this.turn === this.player_index  && !this.checkEndTrick() && this.handle_ui) {
                     this.uihandler.disableNotAllowedCards(this.current_trick, this.hands[this.turn])
@@ -808,10 +929,10 @@ function findExact(value) {
 function main() {
     var hands = [new Hand(TYPE.HUMAN, "You"), new Hand(TYPE.AI, "Harry"), new Hand(TYPE.AI, "Ron"), 
                  new Hand(TYPE.AI, "Hermione")]
-    var ais = [null, new AIDecider(hands[1]), new AIDecider(hands[2]), new AIDecider(hands[3])]
+    var ais = [null, new RulesDecider(hands[1]), new RulesDecider(hands[2]), new RulesDecider(hands[3])]
     var whist = new Whist(true, hands, ais, 0)
     
-    setInterval(function() {whist.update()}, TIME_BETWEEN_ACTIONS)
+    setInterval(function() {whist.update()}, 100)
 }
 
 main()

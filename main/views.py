@@ -90,7 +90,7 @@ def handler404(request, exception):
         "title": "404", 
         "status": 404
     }
-    return render(request, 'main/error_view.html', context=context, status=404)
+    return render(request, 'main/error_view.html', context=context)
 
 def handler500(request):
     """
@@ -102,7 +102,7 @@ def handler500(request):
         "title": "500", 
         "status": 500
     }
-    return render(request, 'main/error_view.html', context=context, status=500)
+    return render(request, 'main/error_view.html', context=context)
 
 
 def handler400(request, exception):
@@ -115,7 +115,7 @@ def handler400(request, exception):
         "title": "400", 
         "status": 400
     }
-    return render(request, 'main/error_view.html', context=context, status=400)
+    return render(request, 'main/error_view.html', context=context)
 
 
 def handler403(request, exception):
@@ -128,4 +128,4 @@ def handler403(request, exception):
         "title": "403", 
         "status": 403
     }
-    return render(request, 'main/error_view.html', context=context, status=403)
+    return render(request, 'main/error_view.html', context=context)

@@ -22,102 +22,39 @@
                 Previous Trick
             </div>
             <div id="trick-cards">
-                <div class="trick-card" id="trick-card-0">
-    
-                </div>
-                <div class="trick-card" id="trick-card-1">
+                {% for i in "0123" %}
+                    <div class="trick-card" id="trick-card-{{i}}">
         
-                </div>
-                <div class="trick-card" id="trick-card-2">
-        
-                </div>
-                <div class="trick-card" id="trick-card-3">
-        
-                </div>
+                    </div>
+                {% endfor %}
             </div>
             
         </div>
-        
-        <div class="card-turn" id="card-turn-0">
+        {% for i in "0123" %}
+            <div class="card-turn" id="card-turn-{{i}}">
 
-        </div>
-        <div class="card-turn" id="card-turn-1">
-
-        </div>
-        <div class="card-turn" id="card-turn-2">
-
-        </div>
-        <div class="card-turn" id="card-turn-3">
-
-        </div>
-
-        <div class="player-info" id="player-info-0">
-            <p class="name-player" id="name-player-0"></p>
-            <div class="dealer-turn">
-                <div class="not-dealer-player" id="dealer-player-0"></div>
-                <div class="not-turn-player" id="turn-player-0"></div>
             </div>
-            <p class="score-player-now">
-                Game: <span id="score-player-now-0">0</span>
-            </p>
-            <p class="score-player-overall">
-                Overall: <span id="score-player-overall-0">0</span>
-            </p>
-            <p class="choice-player-info">
-                <span id="choice-player-info-0"></span>
-            </p>
-            
-        </div>
-        <div class="player-info" id="player-info-1">
-            <p class="name-player" id="name-player-1"></p>
-            <div class="dealer-turn">
-                <div class="not-dealer-player" id="dealer-player-1"></div>
-                <div class="not-turn-player" id="turn-player-1"></div>
+        {% endfor %}
+
+        {% for i in "0123" %}
+            <div class="player-info" id="player-info-{{i}}">
+                <p class="name-player" id="name-player-{{i}}"></p>
+                <div class="dealer-turn">
+                    <div class="not-dealer-player" id="dealer-player-{{i}}"></div>
+                    <div class="not-turn-player" id="turn-player-{{i}}"></div>
+                </div>
+                <p class="score-player-now">
+                    Game: <span id="score-player-now-{{i}}">0</span>
+                </p>
+                <p class="score-player-overall">
+                    Overall: <span id="score-player-overall-{{i}}">0</span>
+                </p>
+                <p class="choice-player-info">
+                    <span id="choice-player-info-{{i}}"></span>
+                </p>
             </div>
-            <p class="score-player-now">
-                Game: <span id="score-player-now-1">0</span>
-            </p>
-            <p class="score-player-overall">
-                Overall: <span id="score-player-overall-1">0</span>
-            </p>
-            <p class="choice-player-info">
-                <span id="choice-player-info-1"></span>
-            </p>
-            
-        </div>
-        <div class="player-info" id="player-info-2">
-            <p class="name-player" id="name-player-2"></p>
-            <div class="dealer-turn">
-                <div class="not-dealer-player" id="dealer-player-2"></div>
-                <div class="not-turn-player" id="turn-player-2"></div>
-            </div>
-            <p class="score-player-now">
-                Game: <span id="score-player-now-2">0</span>
-            </p>
-            <p class="score-player-overall">
-                Overall: <span id="score-player-overall-2">0</span>
-            </p>
-            <p class="choice-player-info">
-                <span id="choice-player-info-2"></span>
-            </p>
-            
-        </div>
-        <div class="player-info" id="player-info-3">
-            <p class="name-player" id="name-player-3"></p>
-            <div class="dealer-turn">
-                <div class="not-dealer-player" id="dealer-player-3"></div>
-                <div class="not-turn-player" id="turn-player-3"></div>
-            </div>
-            <p class="score-player-now">
-                Game: <span id="score-player-now-3">0</span>
-            </p>
-            <p class="score-player-overall">
-                Overall: <span id="score-player-overall-3">0</span>
-            </p>
-            <p class="choice-player-info">
-                <span id="choice-player-info-3"></span>
-            </p>
-        </div>
+        {% endfor %}
+
 
         <div class="choice-menu" id="choice-menu-1" style="display: none">
             <p class="option" value="0">Pass</p>
@@ -135,16 +72,15 @@
                 </div>
               </div>
               <p class="option" value="7">Misery</p>
-              <p class="option" value="8">Open Misery</p>
               <div class="dropdown">
                 <p class="option-dropdown dropdown-toggle" type="button" id="dropdownGrandSlam" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Grand Slam
                 </p>
                 <div class="dropdown-menu" aria-labelledby="dropdownGrandSlam">
-                  <p class="option" value="9">Spades</p>
-                  <p class="option" value="10">Diamonds</p>
-                  <p class="option" value="11">Clubs</p>
-                  <p class="option" value="12">Hearts</p>
+                  <p class="option" value="8">Spades</p>
+                  <p class="option" value="9">Diamonds</p>
+                  <p class="option" value="10">Clubs</p>
+                  <p class="option" value="11">Hearts</p>
                 </div>
               </div>
 
